@@ -1,15 +1,17 @@
-package example.com.capstoneproject;
+package example.com.capstoneproject.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class SuggestedApparelActivity extends AppCompatActivity
+import example.com.capstoneproject.R;
+
+public class ClothingActivity extends AppCompatActivity
 {
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_suggested_apparel);
+        setContentView(R.layout.activity_clothing);
     }
 }
