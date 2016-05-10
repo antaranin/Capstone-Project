@@ -3,4 +3,19 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_water_res">Not resistant at all. Will get wet, soaked or even damaged in light rain</string>
+    <string name="light_water_res">Will resist light rain for a short time, but not suitable for longer exposure.</string>
+    <string name="medium_water_res">Can handle light to medium rain/snow for longer periods of time (30 min - 1h).</string>
+    <string name="high_water_res">Can resist even strong showers and doesn\'t soak almost at all.</string>
+    <string name="very_high_water_res">Fully or almost fully resistant to rain. Suitable for extreme weather conditions.</string>
+    <string name="no_wind_res">Provides no wind resistance at all.</string>
+    <string name="light_wind_res">Can shield from light winds and breezes but doesn\'t protect from strong wind.</string>
+    <string name="very_high_wind_res">Completely wind resistant. Protects completely from being chilled by the wind.</string>
+    <string name="high_wind_res">Provides good protection from wind.</string>
+    <string name="medium_wind_res">Suitable for medium wind strength.</string>
+    <string name="no_temp_res" formatted="false">Suitable for hot days (%s+ degrees).</string>
+    <string name="light_temp_res" formatted="false">Good for warmer days (%s - %s degrees)</string>
+    <string name="medium_temp_res" formatted="false">Provides some protections from cold (%s - %s degrees)</string>
+    <string name="high_temp_res" formatted="false">Good for colder days (%s - %s)</string>
+    <string name="very_high_temp_res" formatted="false">Perfect for freezing-cold winters (%s and below)</string>
 </resources>

@@ -1,15 +1,26 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context=".fragments.ItemParamFragment"
+             tools:context=".gui_layer.fragments.ItemParamFragment"
     >
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <example.com.capstoneproject.gui_layer.FillableView
+        android:id="@+id/fillableView"
         android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"
+        android:layout_above="@+id/param_description_tv"
         />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/param_description_tv"
+        android:layout_margin="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        />
+
+</RelativeLayout>

@@ -1,4 +1,4 @@
-package example.com.capstoneproject.fragments;
+package example.com.capstoneproject.gui_layer.fragments;
 
 
 import android.os.Bundle;
