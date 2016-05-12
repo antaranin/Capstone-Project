@@ -6,7 +6,13 @@
              tools:context=".gui_layer.fragments.ItemParamFragment"
     >
 
-    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        style="@style/large_tv_style"
+        android:text="@string/drag_up_down"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/small_margin_padding"
+        />
+
     <example.com.capstoneproject.gui_layer.FillableView
         android:id="@+id/fillableView"
         android:layout_width="match_parent"
@@ -21,6 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_alignParentBottom="true"
+        android:textSize="@dimen/large_text_size"
         />
 
 </RelativeLayout>

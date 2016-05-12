@@ -1,12 +1,27 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
-        <item name="android:textColor">@color/primary_text</item>
+    <style name="wraped_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="text_view_style" parent="wraped_style">
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+    </style>
+
+    <style name="large_tv_style" parent="text_view_style">
+        <item name="android:textSize">@dimen/large_text_size</item>
+    </style>
+
+    <style name="medium_tv_style" parent="text_view_style">
+        <item name="android:textSize">@dimen/medium_text_size</item>
+    </style>
+
+    <style name="small_tv_style" parent="text_view_style">
+        <item name="android:textSize">@dimen/small_text_size</item>
     </style>
 
 </resources>

@@ -18,4 +18,5 @@
     <string name="medium_temp_res" formatted="false">Provides some protections from cold (%s - %s degrees)</string>
     <string name="high_temp_res" formatted="false">Good for colder days (%s - %s)</string>
     <string name="very_high_temp_res" formatted="false">Perfect for freezing-cold winters (%s and below)</string>
+    <string name="drag_up_down">Drag up or down to change</string>
 </resources>
