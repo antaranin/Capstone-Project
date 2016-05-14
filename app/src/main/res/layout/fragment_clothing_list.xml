@@ -3,51 +3,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".gui_layer.fragments.ClothingListFragment"
     >
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:fitsSystemWindows="true"
-        android:elevation="@dimen/app_bar_elevation"
-        >
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="Add item"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:layout_collapseMode="pin"
-            />
-    </android.support.design.widget.AppBarLayout>
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
+    <TextView
+        android:id="@+id/no_item_tv"
+        style="@style/large_tv_style"
+        android:layout_centerHorizontal="true"
+        android:text="@string/no_items_found_please_add_some"
         />
 
-    <RelativeLayout
+    <include
+        android:id="@+id/item_preview_layout"
+        layout="@layout/item_preview"
+        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/item_rv"
+        android:layout_marginTop="@dimen/medium_margin_padding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_preview_layout"
+        />
+
+    <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-
-
-    </RelativeLayout>
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add"
+        android:layout_below="@+id/item_preview_layout"
+        android:layout_marginTop="-16dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/medium_margin_padding"
+        android:elevation="@dimen/fab_elevation"
         />
+
 
 </RelativeLayout>

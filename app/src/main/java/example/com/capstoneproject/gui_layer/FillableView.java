@@ -1,6 +1,7 @@
 package example.com.capstoneproject.gui_layer;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -12,6 +13,7 @@ import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 
+import example.com.capstoneproject.R;
 import hugo.weaving.DebugLog;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,8 +26,12 @@ public class FillableView extends View
     private static final int FILL_PERC_MOVE = 3;
     public static final int NO_IMAGE = -1;
     private final static int HUNDRED_PERC = 100;
-    private @DrawableRes int mainImageId = NO_IMAGE;
-    private @DrawableRes int fillerImageId = NO_IMAGE;
+    private
+    @DrawableRes
+    int mainImageId = NO_IMAGE;
+    private
+    @DrawableRes
+    int fillerImageId = NO_IMAGE;
 
     private Bitmap mainImage;
     private Bitmap fillerImage;
@@ -57,25 +63,49 @@ public class FillableView extends View
     public FillableView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
+        initAttrs(attrs);
     }
 
     public FillableView(Context context, AttributeSet attrs, int defStyleAttr)
     {
         super(context, attrs, defStyleAttr);
+        initAttrs(attrs);
+    }
+
+    private void initAttrs(AttributeSet attrs)
+    {
+        TypedArray a = getContext().getTheme().obtainStyledAttributes(
+                attrs,
+                R.styleable.FillableView,
+                0, 0);
+        try
+        {
+            maxFill = a.getInt(R.styleable.FillableView_max_fill, maxFill);
+            currentFill = a.getInt(R.styleable.FillableView_current_fill, currentFill);
+            animateTouch = a.getBoolean(R.styleable.FillableView_animate_touch, false);
+            int mainImageId = a.getResourceId(R.styleable.FillableView_main_image, 0);
+            setMainImage(mainImageId);
+            int fillerImageId = a.getResourceId(R.styleable.FillableView_filler_image, 0);
+            setFillerImage(fillerImageId);
+        }
+        finally
+        {
+            a.recycle();
+        }
     }
 
     @DebugLog
     private void initResources()
     {
-        if(fillerImageId != NO_IMAGE)
+        if (fillerImageId != NO_IMAGE)
             setFillerImage(fillerImageId);
-        if(mainImageId != NO_IMAGE)
+        if (mainImageId != NO_IMAGE)
             setMainImage(mainImageId);
 
-        if(mainImage != null)
+        if (mainImage != null)
             imageCoords = calculateImageCoords(mainImage);
 
-        if(fillerImage != null)
+        if (fillerImage != null)
         {
             fillerOutRect = calculateImageRect(fillerImage);
             fillerRect = new Rect(0, 0, fillerImage.getWidth(), fillerImage.getHeight());
@@ -87,14 +117,18 @@ public class FillableView extends View
     public void setMainImage(@DrawableRes int mainImageId)
     {
         this.mainImageId = mainImageId;
-        if(getPaddedWidth() > 0 && getPaddedHeight() > 0)
+        if (mainImageId == 0)
+            mainImage = null;
+        else if (getPaddedWidth() > 0 && getPaddedHeight() > 0)
             mainImage = createScaledImage(mainImageId, getPaddedWidth(), getPaddedHeight());
     }
 
     public void setFillerImage(@DrawableRes int fillerImageRes)
     {
         this.fillerImageId = fillerImageRes;
-        if(getPaddedWidth() > 0 && getPaddedHeight() > 0)
+        if (fillerImageRes == 0)
+            fillerImage = null;
+        else if (getPaddedWidth() > 0 && getPaddedHeight() > 0)
             fillerImage = createScaledImage(fillerImageRes, getPaddedWidth(), getPaddedHeight());
     }
 
@@ -103,7 +137,7 @@ public class FillableView extends View
     protected void onSizeChanged(int w, int h, int oldw, int oldh)
     {
         super.onSizeChanged(w, h, oldw, oldh);
-        if(getPaddedHeight() > 0 && getPaddedWidth() > 0)
+        if (getPaddedHeight() > 0 && getPaddedWidth() > 0)
             initResources();
     }
 
@@ -114,7 +148,7 @@ public class FillableView extends View
         float iconRatio = (float) icon.getWidth() / (float) icon.getHeight();
         float canvasRatio = (float) maxWidth / (float) maxHeight;
         boolean useMaxWidth = canvasRatio < iconRatio;
-        int finalWidth = useMaxWidth ? maxWidth :  (int) (maxHeight * iconRatio);
+        int finalWidth = useMaxWidth ? maxWidth : (int) (maxHeight * iconRatio);
         int finalHeight = useMaxWidth ? (int) (maxWidth / iconRatio) : maxHeight;
 
         return Bitmap.createScaledBitmap(icon, finalWidth, finalHeight, true);
@@ -136,9 +170,9 @@ public class FillableView extends View
     {
         this.fillPerc = fillPercent;
         currentFill = Math.round(maxFill * (float) fillPercent / HUNDRED_PERC);
-        if(onFillChangedListener != null)
+        if (onFillChangedListener != null)
             onFillChangedListener.onFillChanged(currentFill, userInteraction);
-        if(fillerRect != null && fillerOutRect != null)
+        if (fillerRect != null && fillerOutRect != null)
         {
             fillerRect.top = fillerRect.bottom - fillerImage.getHeight() * fillPercent / HUNDRED_PERC;
             fillerOutRect.top = fillerOutRect.bottom - fillerImage.getHeight() * fillPercent / HUNDRED_PERC;
@@ -164,21 +198,21 @@ public class FillableView extends View
     {
         super.onDraw(canvas);
 
-        if(fillerImage != null)
+        if (fillerImage != null)
             canvas.drawBitmap(fillerImage, fillerRect, fillerOutRect, null);
 
-        if(mainImage != null)
+        if (mainImage != null)
             canvas.drawBitmap(mainImage, imageCoords.first, imageCoords.second, null);
 
-        if(!isTouched)
+        if (!isTouched)
         {
             int currentFillPerc = currentFill * HUNDRED_PERC / maxFill;
             int percDiff = fillPerc - currentFillPerc;
-            if(percDiff == 0)
+            if (percDiff == 0)
                 return;
-            else if(percDiff > FILL_PERC_MOVE)
+            else if (percDiff > FILL_PERC_MOVE)
                 processFill(fillPerc - FILL_PERC_MOVE, false);
-            else if(percDiff < -FILL_PERC_MOVE)
+            else if (percDiff < -FILL_PERC_MOVE)
                 processFill(fillPerc + FILL_PERC_MOVE, false);
             else
                 processFill(currentFillPerc, false);
@@ -203,37 +237,37 @@ public class FillableView extends View
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
-        if(!animateTouch)
+        if (!animateTouch)
             return false;
 
-        if(event.getAction() == MotionEvent.ACTION_DOWN)
+        if (event.getAction() == MotionEvent.ACTION_DOWN)
         {
             isTouched = true;
         }
-        else if(event.getAction() == MotionEvent.ACTION_UP)
+        else if (event.getAction() == MotionEvent.ACTION_UP)
         {
             isTouched = false;
-            if(currentFill * HUNDRED_PERC / maxFill != fillPerc)
-            invalidate();
+            if (currentFill * HUNDRED_PERC / maxFill != fillPerc)
+                invalidate();
         }
 
         log("Is touched => " + isTouched);
-        if(event.getAction() != MotionEvent.ACTION_MOVE)
+        if (event.getAction() != MotionEvent.ACTION_MOVE)
             return true;
 
         int height = fillerImage.getHeight();
         int translatedY = (int) (event.getY() - (fillerOutRect.bottom - height));
         int perc;
-        if(translatedY < 0)
+        if (translatedY < 0)
             perc = 100;
-        else if(translatedY > height)
+        else if (translatedY > height)
             perc = 0;
         else
             perc = ((height - translatedY) * 100 / height);
         log(String.format("Event y => %s, translated y => %s bottom => %s height => %s",
                 event.getY(), translatedY, fillerOutRect.bottom, height));
 
-        if(perc != fillPerc)
+        if (perc != fillPerc)
             processFill(perc, true);
         return super.onTouchEvent(event);
     }

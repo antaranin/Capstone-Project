@@ -19,4 +19,8 @@
     <string name="high_temp_res" formatted="false">Good for colder days (%s - %s)</string>
     <string name="very_high_temp_res" formatted="false">Perfect for freezing-cold winters (%s and below)</string>
     <string name="drag_up_down">Drag up or down to change</string>
+    <string name="clothing_list">Clothing list</string>
+    <string name="no_items_found_please_add_some">No items found, please add some</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
 </resources>

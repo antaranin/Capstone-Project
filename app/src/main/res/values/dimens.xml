@@ -9,5 +9,7 @@
     <dimen name="small_margin_padding">8dp</dimen>
     <dimen name="medium_margin_padding">16dp</dimen>
     <dimen name="large_margin_padding">24dp</dimen>
+    <dimen name="fab_elevation">8dp</dimen>
+    <dimen name="recycler_icon_size">40dp</dimen>
 
 </resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="FillableView">
+        <attr name="main_image" format="reference"/>
+        <attr name="filler_image" format="reference"/>
+        <attr name="max_fill" format="integer"/>
+        <attr name="current_fill" format="integer"/>
+        <attr name="animate_touch" format="boolean"/>
+    </declare-styleable>
+</resources>
