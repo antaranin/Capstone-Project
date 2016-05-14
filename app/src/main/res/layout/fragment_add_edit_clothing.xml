@@ -1,27 +1,72 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
              tools:context=".gui_layer.fragments.AddEditClothingFragment"
     >
 
-    <!-- TODO: Update blank fragment layout -->
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
+    <ImageView
+        android:id="@+id/item_photo_iv"
         android:layout_width="match_parent"
-        android:layout_height="256dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:fitsSystemWindows="true"
-        android:elevation="@dimen/app_bar_elevation">
+        android:layout_height="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/item_param_ll"
+        android:background="?attr/colorPrimary"
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+        />
+
+    <TextView
+        android:id="@+id/add_image_info_tv"
+        style="@style/very_large_tv_style"
+        android:text="Long press to add or change photo."
+        android:textColor="@color/alterante_text"
+        android:layout_alignBottom="@+id/item_photo_iv"
+        android:layout_alignTop="@+id/item_photo_iv"
+        android:paddingEnd="@dimen/large_margin_padding"
+        android:paddingStart="@dimen/large_margin_padding"
+        android:gravity="center"
+        />
+
+    <include
+        android:id="@+id/item_param_ll"
+        layout="@layout/item_param_btn_ll"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:layout_collapseMode="pin"/>
+        android:layout_height="@dimen/item_param_layout_height"
+        android:layout_above="@+id/item_name_et"
+        />
+    <EditText
+        android:id="@+id/item_name_et"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_param_layout_height"
+        android:layout_alignParentBottom="true"
+        android:textSize="@dimen/large_text_size"
+        android:paddingTop="@dimen/small_margin_padding"
+        android:paddingBottom="@dimen/small_margin_padding"
+        android:paddingLeft="@dimen/medium_margin_padding"
+        android:paddingRight="@dimen/medium_margin_padding"
+        android:hint="@string/enter_clothing_name"
+        />
 
-    </android.support.design.widget.AppBarLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_confirm_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add"
+        android:layout_marginEnd="@dimen/large_margin_padding"
+        android:layout_above="@+id/item_param_ll"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="-8dp"
+        />
 
-</FrameLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/edit_cancel_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_edit"
+        android:layout_above="@+id/add_confirm_fab"
+        android:layout_alignStart="@+id/add_confirm_fab"
+        android:layout_marginBottom="@dimen/large_margin_padding"
+
+        />
+
+</RelativeLayout>

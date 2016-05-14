@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:paddingTop="@dimen/small_margin_padding"
+    android:paddingBottom="@dimen/small_margin_padding"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+
+    <ImageView
+        android:id="@+id/clothing_type_btn"
+        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:src="@drawable/ic_t_shirt"
+        />
+
+    <example.com.capstoneproject.gui_layer.FillableView
+        android:id="@+id/water_res_btn"
+        style="@style/fillable_view_ll_style"
+        app:main_image="@drawable/ic_drop"
+        app:filler_image="@drawable/ic_drop_filled"
+        />
+
+    <example.com.capstoneproject.gui_layer.FillableView
+        android:id="@+id/wind_res_btn"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        app:main_image="@drawable/ic_wind"
+        app:filler_image="@drawable/ic_wind_fill"
+        />
+
+    <example.com.capstoneproject.gui_layer.FillableView
+        android:id="@+id/cold_res_btn"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        app:main_image="@drawable/ic_temperature"
+        app:filler_image="@drawable/ic_temperature_fill"
+        />
+
+</LinearLayout>

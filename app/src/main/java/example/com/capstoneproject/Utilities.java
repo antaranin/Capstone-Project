@@ -48,7 +48,7 @@ public class Utilities
         }
     }
 
-    public static String getTemperatureResistanceDesc(Context context, @ClothingItem.Resistance int resistance)
+    public static String getColdResistanceDesc(Context context, @ClothingItem.Resistance int resistance)
     {
         switch (resistance)
         {

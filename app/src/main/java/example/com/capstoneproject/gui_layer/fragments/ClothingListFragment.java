@@ -7,7 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import butterknife.OnClick;
+import butterknife.Optional;
 import example.com.capstoneproject.R;
+import example.com.capstoneproject.model_layer.ClothingItem;
+import lombok.Setter;
 
 
 /**
@@ -15,7 +19,8 @@ import example.com.capstoneproject.R;
  */
 public class ClothingListFragment extends Fragment
 {
-
+    @Setter
+    private OnListInteractionListener listener;
 
     public ClothingListFragment()
     {
@@ -31,4 +36,19 @@ public class ClothingListFragment extends Fragment
         return inflater.inflate(R.layout.fragment_clothing_list, container, false);
     }
 
+    @Optional
+    @OnClick(R.id.add_item_fab_clf)
+    void onAddItemPressed()
+    {
+        if(listener != null)
+            listener.onAddItemRequested();
+    }
+
+    public interface OnListInteractionListener
+    {
+        void onAddItemRequested();
+
+        void onEditItemRequested(ClothingItem item);
+
+    }
 }

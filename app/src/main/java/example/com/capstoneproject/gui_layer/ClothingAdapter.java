@@ -10,10 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import example.com.capstoneproject.R;
 import example.com.capstoneproject.SingleSelectionAdapter;
+import example.com.capstoneproject.data_layer.ClothingCursor;
 import example.com.capstoneproject.model_layer.ClothingItem;
 
 /**
@@ -21,22 +22,18 @@ import example.com.capstoneproject.model_layer.ClothingItem;
  */
 public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.ClothingViewHolder>
 {
-    private Cursor cursor;
+    private ClothingCursor cursor;
     private OnDataSetListener listener;
 
     @Override
     public ClothingViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
-        if (parent instanceof RecyclerView)
-        {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_preview, parent, false);
-            view.setFocusable(true);
-            return new ClothingViewHolder(view);
-        }
-        else
-        {
+        if (!(parent instanceof RecyclerView))
             throw new RuntimeException("Not bound to RecyclerView");
-        }
+
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_preview, parent, false);
+        view.setFocusable(true);
+        return new ClothingViewHolder(view);
     }
 
     @Override
@@ -57,7 +54,7 @@ public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.Clot
     public void setData(@Nullable  Cursor cursor)
     {
         boolean oldDataAvailable = this.cursor != null && this.cursor.getCount() != 0;
-        this.cursor = cursor;
+        this.cursor = cursor != null ? new ClothingCursor(cursor) : null;
         boolean newDataAvailable = cursor != null && cursor.getCount() != 0;
 
         notifyDataSetChanged();
@@ -76,7 +73,7 @@ public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.Clot
             throw new AssertionError("The position provided is outside of data range");
         setSelection(position);
 
-        if(listener != null)
+        if(listener != null && userCalled)
         {
             cursor.moveToPosition(position);
             listener.onItemSelected(buildItemFromCursor());
@@ -90,10 +87,10 @@ public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.Clot
 
     public class ClothingViewHolder extends SingleSelectionAdapter.SingleSelectionHolder implements View.OnCreateContextMenuListener
     {
-        @Bind(R.id.item_name_tv_cri)
+        @BindView(R.id.item_name_tv_cri)
         TextView name_tv;
 
-        @Bind(R.id.item_type_iv_cri)
+        @BindView(R.id.item_type_iv_cri)
         ImageView type_iv;
 
         public ClothingViewHolder(View itemView)

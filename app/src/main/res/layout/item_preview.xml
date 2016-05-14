@@ -1,59 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:elevation="4dp"
     >
 
     <ImageView
-        android:id="@+id/item_preveiw_iv"
+        android:id="@+id/item_photo_iv"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:background="?attr/colorPrimary"
+        android:layout_height="200dp"
+        android:background="?attr/colorPrimaryDark"
 
         />
 
-    <LinearLayout
+    <include
+        android:layout_height="@dimen/item_param_layout_height"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        android:background="?attr/colorPrimary"
-        android:paddingTop="@dimen/small_margin_padding"
-        android:paddingBottom="@dimen/small_margin_padding"
-        >
-
-        <ImageView
-            android:layout_height="match_parent"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_t_shirt"
-            />
-
-        <example.com.capstoneproject.gui_layer.FillableView
-            style="@style/fillable_view_ll_style"
-            app:main_image="@drawable/ic_drop"
-            app:filler_image="@drawable/ic_drop_filled"
-            />
-
-        <example.com.capstoneproject.gui_layer.FillableView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:main_image="@drawable/ic_wind"
-            app:filler_image="@drawable/ic_wind_fill"
-            />
-
-        <example.com.capstoneproject.gui_layer.FillableView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:main_image="@drawable/ic_temperature"
-            app:filler_image="@drawable/ic_temperature_fill"
-            />
-
-    </LinearLayout>
+        layout="@layout/item_param_btn_ll"
+        />
 
 
 

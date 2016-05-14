@@ -11,5 +11,9 @@
     <dimen name="large_margin_padding">24dp</dimen>
     <dimen name="fab_elevation">8dp</dimen>
     <dimen name="recycler_icon_size">40dp</dimen>
+    <dimen name="item_param_layout_height">60dp</dimen>
+    <dimen name="list_side_margin">8dp</dimen>
+    <dimen name="card_elevation">2dp</dimen>
+    <dimen name="very_large_text_size">32sp</dimen>
 
 </resources>

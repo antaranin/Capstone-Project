@@ -23,4 +23,8 @@
     <string name="no_items_found_please_add_some">No items found, please add some</string>
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
+    <string name="enter_clothing_name">Enter clothing name</string>
+    <string name="image_transition">photo_transition</string>
+    <string name="items">Items</string>
+    <string name="settings">Settings</string>
 </resources>

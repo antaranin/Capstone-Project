@@ -31,4 +31,8 @@
         <item name="max_fill">4</item>
     </style>
 
+    <style name="very_large_tv_style" parent="text_view_style">
+        <item name="android:textSize">@dimen/very_large_text_size</item>
+    </style>
+
 </resources>
