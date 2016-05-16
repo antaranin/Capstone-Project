@@ -7,18 +7,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import example.com.capstoneproject.R;
 
 public class SuggestedApparelActivity extends AppCompatActivity
 {
+    @BindView(R.id.current_weather_iv)
+    ImageView weatherIv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggested_apparel);
+
+        ButterKnife.bind(this);
 
         Toolbar toolbar = ButterKnife.findById(this, R.id.toolbar);
         setSupportActionBar(toolbar);

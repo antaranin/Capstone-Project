@@ -28,6 +28,7 @@
                 >
 
                 <ImageView
+                    android:id="@+id/current_weather_iv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -35,7 +36,9 @@
                     android:paddingTop="@dimen/medium_margin_padding"
                     android:paddingBottom="@dimen/medium_margin_padding"
                     />
+
                 <TextView
+                    android:id="@+id/current_temp_tv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -43,7 +46,9 @@
                     android:textSize="32sp"
                     android:gravity="center"
                     />
+
                 <TextView
+                    android:id="@+id/current_wind_tv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"

@@ -38,9 +38,15 @@ public class ClothingActivity extends AppCompatActivity implements
     @Override
     public void onAddItemRequested()
     {
+        if(addEditClothingFragment == null)
+        {
+            addEditClothingFragment = new AddEditClothingFragment();
+            addEditClothingFragment.setListener(this);
+        }
+
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_holder_layout_ca, new AddEditClothingFragment())
+                .replace(R.id.fragment_holder_layout_ca, addEditClothingFragment)
                 .commit();
     }
 
