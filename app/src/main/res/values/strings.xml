@@ -2,6 +2,7 @@
     <string name="app_name">Capstone Project</string>
 
     <!-- TODO: Remove or change this placeholder text -->
+    <string name="authority">example.com.capstoneproject</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_water_res">Not resistant at all. Will get wet, soaked or even damaged in light rain</string>
     <string name="light_water_res">Will resist light rain for a short time, but not suitable for longer exposure.</string>
