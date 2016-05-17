@@ -27,13 +27,15 @@
         android:gravity="center"
         />
 
-    <include
-        android:id="@+id/item_param_ll"
-        layout="@layout/item_param_btn_ll"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/item_param_layout_height"
-        android:layout_above="@+id/item_name_et"
-        />
+        <include
+            android:id="@+id/item_param_ll"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/item_param_layout_height"
+            android:layout_above="@+id/item_name_et"
+            layout="@layout/item_param_btn_ll"
+            />
+
+
     <EditText
         android:id="@+id/item_name_et"
         android:layout_width="match_parent"

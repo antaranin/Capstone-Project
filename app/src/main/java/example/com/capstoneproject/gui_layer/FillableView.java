@@ -97,23 +97,13 @@ public class FillableView extends View
     @DebugLog
     private void initResources()
     {
-        if (fillerImageId != NO_IMAGE)
-            setFillerImage(fillerImageId);
-        if (mainImageId != NO_IMAGE)
-            setMainImage(mainImageId);
-
-        if (mainImage != null)
-            imageCoords = calculateImageCoords(mainImage);
-
-        if (fillerImage != null)
-        {
-            fillerOutRect = calculateImageRect(fillerImage);
-            fillerRect = new Rect(0, 0, fillerImage.getWidth(), fillerImage.getHeight());
-        }
+        setMainImage(mainImageId);
+        setFillerImage(fillerImageId);
 
         processFill(fillPerc, false);
     }
 
+    @DebugLog
     public void setMainImage(@DrawableRes int mainImageId)
     {
         this.mainImageId = mainImageId;
@@ -121,8 +111,15 @@ public class FillableView extends View
             mainImage = null;
         else if (getPaddedWidth() > 0 && getPaddedHeight() > 0)
             mainImage = createScaledImage(mainImageId, getPaddedWidth(), getPaddedHeight());
+
+        if (mainImage != null)
+            imageCoords = calculateImageCoords(mainImage);
+        //log("Main image res => " + this.mainImageId);
+
+        invalidate();
     }
 
+    @DebugLog
     public void setFillerImage(@DrawableRes int fillerImageRes)
     {
         this.fillerImageId = fillerImageRes;
@@ -130,6 +127,16 @@ public class FillableView extends View
             fillerImage = null;
         else if (getPaddedWidth() > 0 && getPaddedHeight() > 0)
             fillerImage = createScaledImage(fillerImageRes, getPaddedWidth(), getPaddedHeight());
+
+        if (fillerImage != null)
+        {
+            fillerOutRect = calculateImageRect(fillerImage);
+            fillerRect = new Rect(0, 0, fillerImage.getWidth(), fillerImage.getHeight());
+        }
+
+        //log("Filler image id => " + this.fillerImageId);
+
+        invalidate();
     }
 
     @Override
@@ -238,7 +245,7 @@ public class FillableView extends View
     public boolean onTouchEvent(MotionEvent event)
     {
         if (!animateTouch)
-            return false;
+            return super.onTouchEvent(event);
 
         if (event.getAction() == MotionEvent.ACTION_DOWN)
         {
@@ -253,7 +260,10 @@ public class FillableView extends View
 
         log("Is touched => " + isTouched);
         if (event.getAction() != MotionEvent.ACTION_MOVE)
+        {
+            super.onTouchEvent(event);
             return true;
+        }
 
         int height = fillerImage.getHeight();
         int translatedY = (int) (event.getY() - (fillerOutRect.bottom - height));

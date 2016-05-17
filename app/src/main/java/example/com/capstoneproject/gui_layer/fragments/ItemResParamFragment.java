@@ -20,6 +20,7 @@ import example.com.capstoneproject.R;
 import example.com.capstoneproject.Utilities;
 import example.com.capstoneproject.gui_layer.FillableView;
 import example.com.capstoneproject.model_layer.ClothingItem;
+import hugo.weaving.DebugLog;
 
 public class ItemResParamFragment extends Fragment
 {
@@ -32,6 +33,9 @@ public class ItemResParamFragment extends Fragment
 
     @BindView(R.id.param_description_tv)
     TextView paramDescTv;
+
+    @BindView(R.id.fillableView)
+    FillableView fillableView;
 
     @ItemResParamFragment.ParamType
     private int currentParamType;
@@ -66,6 +70,7 @@ public class ItemResParamFragment extends Fragment
         return fragment;
     }
 
+    @DebugLog
     public void setParamType(@ParamType int type)
     {
         currentParamType = type;
@@ -99,10 +104,9 @@ public class ItemResParamFragment extends Fragment
         processResistance(resistance);
     }
 
+    @DebugLog
     private void resetTypeViews()
     {
-        FillableView fillableView = ButterKnife.findById(getView(), R.id.fillableView);
-
         fillableView.setMainImage(getMainIcon(currentParamType));
         fillableView.setFillerImage(getFillIcon(currentParamType));
         fillableView.setMaxFill(4);
@@ -120,7 +124,6 @@ public class ItemResParamFragment extends Fragment
     {
         this.resistance = resistance;
         paramDescTv.setText(getParamTypeResText(currentParamType, resistance));
-
     }
 
     private String getParamTypeResText(@ParamType  int paramType, @ClothingItem.Resistance int resistance)
@@ -158,8 +161,10 @@ public class ItemResParamFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        resetTypeViews();
     }
 
+    @DebugLog
     @DrawableRes
     private int getMainIcon(@ParamType int paramType)
     {
@@ -176,6 +181,7 @@ public class ItemResParamFragment extends Fragment
         }
     }
 
+    @DebugLog
     @DrawableRes
     private int getFillIcon(@ParamType int paramType)
     {

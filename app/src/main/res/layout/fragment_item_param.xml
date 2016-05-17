@@ -7,6 +7,7 @@
     >
 
     <TextView
+        android:id="@+id/up_down_tv"
         style="@style/large_tv_style"
         android:text="@string/drag_up_down"
         android:layout_centerHorizontal="true"
@@ -19,6 +20,7 @@
         android:layout_alignParentTop="true"
         android:layout_height="match_parent"
         android:layout_above="@+id/param_description_tv"
+        android:layout_below="@+id/up_down_tv"
         />
 
     <TextView

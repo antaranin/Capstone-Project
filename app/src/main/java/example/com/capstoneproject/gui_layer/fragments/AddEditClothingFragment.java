@@ -4,14 +4,15 @@ package example.com.capstoneproject.gui_layer.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import example.com.capstoneproject.R;
 import example.com.capstoneproject.model_layer.ClothingItem;
+import hugo.weaving.DebugLog;
 import lombok.Setter;
 
 
@@ -20,6 +21,7 @@ import lombok.Setter;
  */
 public class AddEditClothingFragment extends Fragment
 {
+    private final static String TAG = AddEditClothingFragment.class.getSimpleName();
     private ClothingItem currentItem;
     @Setter
     private OnAddEditClothingInteractionListener listener;
@@ -39,27 +41,41 @@ public class AddEditClothingFragment extends Fragment
     }
 
     @Override
+    @DebugLog
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        View includeView = view.findViewById(R.id.item_param_ll);
+        includeView.findViewById(R.id.water_res_btn).setOnClickListener(v -> onWaterResBtnPressed());
+        Log.d(TAG, "onViewCreated: water res btn => " + includeView.findViewById(R.id.water_res_btn));
+        includeView.findViewById(R.id.wind_res_btn).setOnClickListener(v -> onWindResBtnPressed());
+        includeView.findViewById(R.id.cold_res_btn).setOnClickListener(v -> onColdResBtnPressed());
+        view.findViewById(R.id.add_confirm_fab).setOnClickListener(v -> testClick());
+
     }
 
-    @OnClick(R.id.water_res_btn)
+    @DebugLog
+    void testClick()
+    {
+
+    }
+
+    @DebugLog
     void onWaterResBtnPressed()
     {
         if (listener != null)
             listener.onCallParam(ItemResParamFragment.WATER_RES, currentItem);
     }
 
-    @OnClick(R.id.wind_res_btn)
+    @DebugLog
     void onWindResBtnPressed()
     {
         if (listener != null)
             listener.onCallParam(ItemResParamFragment.WIND_RES, currentItem);
     }
 
-    @OnClick(R.id.cold_res_btn)
+    @DebugLog
     void onColdResBtnPressed()
     {
         if (listener != null)
@@ -70,5 +86,4 @@ public class AddEditClothingFragment extends Fragment
     {
         void onCallParam(@ItemResParamFragment.ParamType int paramType, ClothingItem item);
     }
-
 }
