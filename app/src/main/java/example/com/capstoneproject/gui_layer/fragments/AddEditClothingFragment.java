@@ -12,12 +12,14 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnTextChanged;
 import example.com.capstoneproject.R;
 import example.com.capstoneproject.Utilities;
 import example.com.capstoneproject.data_layer.DataContract;
@@ -35,6 +37,9 @@ import lombok.Setter;
 public class AddEditClothingFragment extends Fragment
 {
     private final static String TAG = AddEditClothingFragment.class.getSimpleName();
+
+    @BindView(R.id.item_name_et)
+    EditText nameEt;
 
     @BindView(R.id.add_confirm_fab)
     FloatingActionButton addConfirmFab;
@@ -132,7 +137,7 @@ public class AddEditClothingFragment extends Fragment
             throw new AssertionError("Either draft item or current item cannot be null");
 
         waterResView.setCurrentFill(displayedItem.getWaterResistance());
-        windResView.setCurrentFill(displayedItem.getWaterResistance());
+        windResView.setCurrentFill(displayedItem.getWindResistance());
         coldResView.setCurrentFill(displayedItem.getColdResistance());
         clothingTypeIv.setImageResource(Utilities.getClothingTypeDrawableRes(displayedItem.getType()));
         itemPhotoIv.setImageURI(displayedItem.getImageUri());
@@ -225,6 +230,7 @@ public class AddEditClothingFragment extends Fragment
 
         draftItem = currentItem.copy();
         setFabsToAddEditMode(true);
+        setEnableInput(true);
     }
 
     private void cancelChanges()
@@ -238,6 +244,30 @@ public class AddEditClothingFragment extends Fragment
         draftItem = null;
         resetViews();
         setFabsToAddEditMode(false);
+        setEnableInput(false);
+    }
+
+    private void setEnableInput(boolean enableInput)
+    {
+        if(enableInput)
+        {
+            waterResView.setClickable(true);
+            windResView.setClickable(true);
+            coldResView.setClickable(true);
+            clothingTypeIv.setClickable(true);
+            nameEt.setEnabled(true);
+            itemPhotoIv.setLongClickable(true);
+        }
+        else
+        {
+            waterResView.setClickable(false);
+            windResView.setClickable(false);
+            coldResView.setClickable(false);
+            clothingTypeIv.setClickable(false);
+            nameEt.setEnabled(false);
+            itemPhotoIv.setLongClickable(false);
+
+        }
     }
 
     @DebugLog
@@ -245,7 +275,7 @@ public class AddEditClothingFragment extends Fragment
     void onClothingTypeBtnPressd()
     {
         if (listener != null)
-            listener.onCallType(draftItem);
+            listener.onRequestTypePick(draftItem);
     }
 
     @DebugLog
@@ -253,7 +283,7 @@ public class AddEditClothingFragment extends Fragment
     void onWaterResBtnPressed()
     {
         if (listener != null)
-            listener.onCallParam(ItemResParamFragment.WATER_RES, draftItem);
+            listener.onRequestParamPick(ItemResParamFragment.WATER_RES, draftItem);
     }
 
     @DebugLog
@@ -261,7 +291,7 @@ public class AddEditClothingFragment extends Fragment
     void onWindResBtnPressed()
     {
         if (listener != null)
-            listener.onCallParam(ItemResParamFragment.WIND_RES, draftItem);
+            listener.onRequestParamPick(ItemResParamFragment.WIND_RES, draftItem);
     }
 
     @DebugLog
@@ -269,7 +299,13 @@ public class AddEditClothingFragment extends Fragment
     void onColdResBtnPressed()
     {
         if (listener != null)
-            listener.onCallParam(ItemResParamFragment.COLD_RES, draftItem);
+            listener.onRequestParamPick(ItemResParamFragment.COLD_RES, draftItem);
+    }
+
+    @OnTextChanged(R.id.item_name_et)
+    void onItemNameChanged(CharSequence changedText)
+    {
+        draftItem.setName(changedText.toString());
     }
 
     private boolean isEditing()
@@ -282,11 +318,35 @@ public class AddEditClothingFragment extends Fragment
         return currentItem == null;
     }
 
+    public void setItemColdRes(@ClothingItem.Resistance int resistance)
+    {
+        draftItem.setColdResistance(resistance);
+        resetViews();
+    }
+
+    public void setItemWindRes(@ClothingItem.Resistance int resistance)
+    {
+        draftItem.setWindResistance(resistance);
+        resetViews();
+    }
+
+    public void setItemWaterRes(@ClothingItem.Resistance int resistance)
+    {
+        draftItem.setWaterResistance(resistance);
+        resetViews();
+    }
+
+    public void setItemType(@ClothingItem.ClothingType int type)
+    {
+        draftItem.setType(type);
+        resetViews();
+    }
+
     public interface OnAddEditClothingInteractionListener
     {
-        void onCallParam(@ItemResParamFragment.ParamType int paramType, ClothingItem item);
+        void onRequestParamPick(@ItemResParamFragment.ParamType int paramType, ClothingItem item);
 
-        void onCallType(ClothingItem item);
+        void onRequestTypePick(ClothingItem item);
 
         void onAddingCanceled();
     }

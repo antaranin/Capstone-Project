@@ -11,7 +11,8 @@ import example.com.capstoneproject.gui_layer.fragments.ItemTypeFragment;
 import example.com.capstoneproject.model_layer.ClothingItem;
 
 public class ClothingActivity extends AppCompatActivity implements
-        ClothingListFragment.OnListInteractionListener, AddEditClothingFragment.OnAddEditClothingInteractionListener
+        ClothingListFragment.OnListInteractionListener, AddEditClothingFragment.OnAddEditClothingInteractionListener,
+        ItemResParamFragment.OnResParamInteractionListener, ItemTypeFragment.OnTypeInteractionListener
 {
     private ClothingListFragment listFragment;
     private AddEditClothingFragment addEditClothingFragment;
@@ -61,12 +62,17 @@ public class ClothingActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onCallParam(@ItemResParamFragment.ParamType int type, ClothingItem item)
+    public void onRequestParamPick(@ItemResParamFragment.ParamType int type, ClothingItem item)
     {
         if(itemResParamFragment == null)
+        {
             itemResParamFragment = ItemResParamFragment.createFragment(type, item);
+            itemResParamFragment.setListener(this);
+        }
         else
+        {
             itemResParamFragment.setParamType(type);
+        }
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -76,12 +82,17 @@ public class ClothingActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onCallType(ClothingItem item)
+    public void onRequestTypePick(ClothingItem item)
     {
         if(itemTypeFragment == null)
+        {
             itemTypeFragment = ItemTypeFragment.createFragment(item);
+            itemTypeFragment.setListener(this);
+        }
         else
+        {
             itemTypeFragment.setItem(item);
+        }
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -93,6 +104,45 @@ public class ClothingActivity extends AppCompatActivity implements
 
     @Override
     public void onAddingCanceled()
+    {
+        getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void onParamChosen(@ClothingItem.Resistance int resistance, @ItemResParamFragment.ParamType int paramType)
+    {
+        getSupportFragmentManager().popBackStack();
+        switch (paramType)
+        {
+            case ItemResParamFragment.COLD_RES:
+                addEditClothingFragment.setItemColdRes(resistance);
+                break;
+            case ItemResParamFragment.WATER_RES:
+                addEditClothingFragment.setItemWaterRes(resistance);
+                break;
+            case ItemResParamFragment.WIND_RES:
+                addEditClothingFragment.setItemWindRes(resistance);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unsupported type => " + paramType);
+        }
+    }
+
+    @Override
+    public void onParamEditCanceled()
+    {
+        getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void onTypeSelected(@ClothingItem.ClothingType int type)
+    {
+        addEditClothingFragment.setItemType(type);
+        getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void onTypeSelectionCancelled()
     {
         getSupportFragmentManager().popBackStack();
     }

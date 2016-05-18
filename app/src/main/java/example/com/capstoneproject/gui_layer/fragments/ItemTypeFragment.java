@@ -18,9 +18,11 @@ import android.widget.ViewFlipper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import example.com.capstoneproject.R;
 import example.com.capstoneproject.model_layer.ClothingItem;
 import hugo.weaving.DebugLog;
+import lombok.Setter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,6 +38,9 @@ public class ItemTypeFragment extends Fragment
 
     private int[] drawables= { R.drawable.ic_t_shirt, R.drawable.ic_wind, R.drawable.ic_wind_fill};
     private String[] typeDescs;
+
+    @Setter
+    private OnTypeInteractionListener listener;
 
     public ItemTypeFragment()
     {
@@ -91,6 +96,20 @@ public class ItemTypeFragment extends Fragment
         });*/
     }
 
+    @OnClick(R.id.confirm_fab)
+    void onConfirmBtnPressed()
+    {
+        if(listener != null)
+            listener.onTypeSelected(currentType);
+    }
+
+    @OnClick(R.id.cancel_fab)
+    void onCancelBtnPressed()
+    {
+        if(listener != null)
+            listener.onTypeSelectionCancelled();
+    }
+
     public void setItem(@Nullable  ClothingItem item)
     {
         if(item == null)
@@ -138,5 +157,12 @@ public class ItemTypeFragment extends Fragment
                 return false;
             return true;
         }
+    }
+
+    public interface OnTypeInteractionListener
+    {
+        void onTypeSelected(@ClothingItem.ClothingType int type);
+
+        void onTypeSelectionCancelled();
     }
 }

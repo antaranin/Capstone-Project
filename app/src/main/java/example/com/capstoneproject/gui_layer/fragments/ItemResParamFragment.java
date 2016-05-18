@@ -16,6 +16,7 @@ import java.lang.annotation.RetentionPolicy;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import example.com.capstoneproject.R;
 import example.com.capstoneproject.Utilities;
 import example.com.capstoneproject.gui_layer.FillableView;
@@ -73,6 +74,22 @@ public class ItemResParamFragment extends Fragment
         }
         return fragment;
     }
+
+    @OnClick(R.id.confirm_fab)
+    void onConfirmPressed()
+    {
+        if(listener != null)
+            listener.onParamChosen(resistance, currentParamType);
+    }
+
+    @OnClick(R.id.cancel_fab)
+    void onCancelPressed()
+    {
+        if(listener != null)
+            listener.onParamEditCanceled();
+    }
+
+
 
     @DebugLog
     public void setParamType(@ParamType int type)
@@ -227,7 +244,7 @@ public class ItemResParamFragment extends Fragment
 
     public interface OnResParamInteractionListener
     {
-        void onParamChosen(@ClothingItem.Resistance int resistance);
+        void onParamChosen(@ClothingItem.Resistance int resistance, @ParamType int paramType);
 
         void onParamEditCanceled();
     }
