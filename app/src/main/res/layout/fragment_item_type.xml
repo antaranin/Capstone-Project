@@ -1,37 +1,30 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context=".gui_layer.fragments.ItemResParamFragment"
+             tools:context="example.com.capstoneproject.gui_layer.fragments.ItemTypeFragment"
     >
 
+    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:id="@+id/up_down_tv"
-        style="@style/large_tv_style"
-        android:text="@string/drag_up_down"
-        android:layout_centerHorizontal="true"
+        android:id="@+id/swipe_left_right_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/swipe_left_or_right_to_change"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/small_margin_padding"
-        android:layout_marginBottom="@dimen/small_margin_padding"
+        android:layout_margin="@dimen/medium_margin_padding"
         />
 
-    <example.com.capstoneproject.gui_layer.FillableView
-        android:id="@+id/fillableView"
+    <ViewFlipper
+        android:id="@+id/type_imge_flipper"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_above="@+id/param_description_tv"
-        android:layout_below="@+id/up_down_tv"
-        />
-
-    <TextView
-        android:id="@+id/param_description_tv"
-        android:layout_margin="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
         android:layout_alignParentBottom="true"
-        android:textSize="@dimen/large_text_size"
-        />
+        android:layout_below="@+id/swipe_left_right_tv"
+
+        >
+
+    </ViewFlipper>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/clear_fb"
@@ -48,8 +41,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_confirm"
-        android:layout_below="@+id/fillableView"
-        android:layout_margin="@dimen/medium_margin_padding"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="60dp"
+        android:layout_marginTop="@dimen/medium_margin_padding"
+        android:layout_marginEnd="@dimen/medium_margin_padding"
         android:layout_alignParentEnd="true"
         />
 

@@ -9,4 +9,5 @@
     <color name="alterante_text">#FFFFFF</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
+    <color name="grayed_out_color">#777777</color>
 </resources>

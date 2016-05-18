@@ -18,6 +18,7 @@ import lombok.Data;
 @Data
 public class ClothingItem implements Parcelable
 {
+    public final static int NO_ID = -1;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({T_SHIRT, SHIRT, TROUSERS, JACKET, SHOES, HAT})
@@ -33,32 +34,34 @@ public class ClothingItem implements Parcelable
     public final static int HIGH_RES = 3;
     public final static int VERY_HIGH_RES = 4;
 
-    private final static int T_SHIRT = 1;
-    private final static int SHIRT = 2;
-    private final static int TROUSERS = 3;
-    private final static int JACKET = 4;
-    private final static int SHOES = 5;
-    private final static int HAT = 6;
+    public final static int T_SHIRT = 0;
+    public final static int SHIRT = 1;
+    public final static int TROUSERS = 2;
+    public final static int JACKET = 3;
+    public final static int SHOES = 4;
+    public final static int HAT = 5;
 
+    private int id = NO_ID;
     private String name;
     private Uri imageUri;
 
     @Resistance
-    private int waterResistance;
+    private int waterResistance = NO_RES;
     @Resistance
-    private int windResistance;
+    private int windResistance = NO_RES;
     @Resistance
-    private int coldResistance;
+    private int coldResistance = NO_RES;
     @ClothingType
-    private int type;
+    private int type = T_SHIRT;
 
     public ClothingItem()
     {
     }
 
     @Builder
-    public ClothingItem(String name, Uri imageUri, int waterResistance, int windResistance, int coldResistance, int type)
+    public ClothingItem(Integer id, String name, Uri imageUri, int waterResistance, int windResistance, int coldResistance, int type)
     {
+        this.id = id != null ? id : NO_ID;
         this.name = name;
         this.imageUri = imageUri;
         this.waterResistance = waterResistance;
@@ -126,5 +129,24 @@ public class ClothingItem implements Parcelable
     public int getWaterResistance()
     {
         return waterResistance;
+    }
+
+    @ClothingItem.ClothingType
+    public int getType()
+    {
+        return type;
+    }
+
+    public ClothingItem copy()
+    {
+        return ClothingItem.builder()
+                .id(id)
+                .imageUri(imageUri)
+                .name(name)
+                .type(type)
+                .coldResistance(coldResistance)
+                .windResistance(windResistance)
+                .waterResistance(waterResistance)
+                .build();
     }
 }

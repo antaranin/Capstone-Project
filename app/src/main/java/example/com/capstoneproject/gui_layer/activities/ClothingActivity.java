@@ -7,6 +7,7 @@ import example.com.capstoneproject.R;
 import example.com.capstoneproject.gui_layer.fragments.AddEditClothingFragment;
 import example.com.capstoneproject.gui_layer.fragments.ClothingListFragment;
 import example.com.capstoneproject.gui_layer.fragments.ItemResParamFragment;
+import example.com.capstoneproject.gui_layer.fragments.ItemTypeFragment;
 import example.com.capstoneproject.model_layer.ClothingItem;
 
 public class ClothingActivity extends AppCompatActivity implements
@@ -15,6 +16,7 @@ public class ClothingActivity extends AppCompatActivity implements
     private ClothingListFragment listFragment;
     private AddEditClothingFragment addEditClothingFragment;
     private ItemResParamFragment itemResParamFragment;
+    private ItemTypeFragment itemTypeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -31,6 +33,7 @@ public class ClothingActivity extends AppCompatActivity implements
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.fragment_holder_layout_ca, listFragment)
+                .addToBackStack(listFragment.getClass().getSimpleName())
                 .commit();
         listFragment.setListener(this);
     }
@@ -47,6 +50,7 @@ public class ClothingActivity extends AppCompatActivity implements
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_holder_layout_ca, addEditClothingFragment)
+                .addToBackStack(addEditClothingFragment.getClass().getSimpleName())
                 .commit();
     }
 
@@ -67,6 +71,29 @@ public class ClothingActivity extends AppCompatActivity implements
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_holder_layout_ca, itemResParamFragment)
+                .addToBackStack(itemResParamFragment.getClass().getSimpleName())
                 .commit();
+    }
+
+    @Override
+    public void onCallType(ClothingItem item)
+    {
+        if(itemTypeFragment == null)
+            itemTypeFragment = ItemTypeFragment.createFragment(item);
+        else
+            itemTypeFragment.setItem(item);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_holder_layout_ca, itemTypeFragment)
+                .addToBackStack(itemTypeFragment.getClass().getSimpleName())
+                .commit();
+
+    }
+
+    @Override
+    public void onAddingCanceled()
+    {
+        getSupportFragmentManager().popBackStack();
     }
 }

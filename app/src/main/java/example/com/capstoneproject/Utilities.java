@@ -1,6 +1,7 @@
 package example.com.capstoneproject;
 
 import android.content.Context;
+import android.support.annotation.DrawableRes;
 
 import example.com.capstoneproject.model_layer.ClothingItem;
 
@@ -53,15 +54,15 @@ public class Utilities
         switch (resistance)
         {
             case ClothingItem.NO_RES:
-                return context.getString(R.string.no_temp_res);
+                return context.getString(R.string.no_temp_res, 20);
             case ClothingItem.LIGHT_RES:
-                return context.getString(R.string.light_temp_res);
+                return context.getString(R.string.light_temp_res, 15, 20);
             case ClothingItem.MEDIUM_RES:
-                return context.getString(R.string.medium_temp_res);
+                return context.getString(R.string.medium_temp_res, 5, 15);
             case ClothingItem.HIGH_RES:
-                return context.getString(R.string.high_temp_res);
+                return context.getString(R.string.high_temp_res, 0, 5);
             case ClothingItem.VERY_HIGH_RES:
-                return context.getString(R.string.very_high_temp_res);
+                return context.getString(R.string.very_high_temp_res, 0);
             default:
                 throw new AssertionError("Unsupported resistance level");
         }
@@ -87,5 +88,27 @@ public class Utilities
             default:
                 throw new AssertionError("Unsupported resistance level");
         }*/
+    }
+
+    @DrawableRes
+    public static int getClothingTypeDrawableRes(@ClothingItem.ClothingType int type)
+    {
+        switch (type)
+        {
+            case ClothingItem.T_SHIRT:
+                return R.drawable.ic_t_shirt;
+            case ClothingItem.HAT:
+                throw new UnsupportedOperationException("Unsupported type => " + type);
+            case ClothingItem.JACKET:
+                throw new UnsupportedOperationException("Unsupported type => " + type);
+            case ClothingItem.SHIRT:
+                throw new UnsupportedOperationException("Unsupported type => " + type);
+            case ClothingItem.SHOES:
+                throw new UnsupportedOperationException("Unsupported type => " + type);
+            case ClothingItem.TROUSERS:
+                throw new UnsupportedOperationException("Unsupported type => " + type);
+            default:
+                throw new UnsupportedOperationException("Unsupported type => " + type);
+        }
     }
 }

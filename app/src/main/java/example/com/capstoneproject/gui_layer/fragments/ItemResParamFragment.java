@@ -21,6 +21,7 @@ import example.com.capstoneproject.Utilities;
 import example.com.capstoneproject.gui_layer.FillableView;
 import example.com.capstoneproject.model_layer.ClothingItem;
 import hugo.weaving.DebugLog;
+import lombok.Setter;
 
 public class ItemResParamFragment extends Fragment
 {
@@ -42,6 +43,9 @@ public class ItemResParamFragment extends Fragment
 
     @ClothingItem.Resistance
     private int resistance = ClothingItem.NO_RES;
+
+    @Setter
+    private OnResParamInteractionListener listener;
 
     public ItemResParamFragment()
     {
@@ -219,5 +223,12 @@ public class ItemResParamFragment extends Fragment
     public void onDetach()
     {
         super.onDetach();
+    }
+
+    public interface OnResParamInteractionListener
+    {
+        void onParamChosen(@ClothingItem.Resistance int resistance);
+
+        void onParamEditCanceled();
     }
 }
