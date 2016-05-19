@@ -1,6 +1,5 @@
 package example.com.capstoneproject.model_layer;
 
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.IntDef;
@@ -18,7 +17,7 @@ import lombok.Data;
 @Data
 public class ClothingItem implements Parcelable
 {
-    public final static int NO_ID = -1;
+    public final static long NO_ID = -1L;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({T_SHIRT, SHIRT, TROUSERS, JACKET, SHOES, HAT})
@@ -41,9 +40,8 @@ public class ClothingItem implements Parcelable
     public final static int SHOES = 4;
     public final static int HAT = 5;
 
-    private int id = NO_ID;
+    private long id = NO_ID;
     private String name;
-    private Uri imageUri;
 
     @Resistance
     private int waterResistance = NO_RES;
@@ -59,11 +57,10 @@ public class ClothingItem implements Parcelable
     }
 
     @Builder
-    public ClothingItem(Integer id, String name, Uri imageUri, int waterResistance, int windResistance, int coldResistance, int type)
+    public ClothingItem(Long id, String name, int waterResistance, int windResistance, int coldResistance, int type)
     {
         this.id = id != null ? id : NO_ID;
         this.name = name;
-        this.imageUri = imageUri;
         this.waterResistance = waterResistance;
         this.windResistance = windResistance;
         this.coldResistance = coldResistance;
@@ -73,8 +70,8 @@ public class ClothingItem implements Parcelable
     @SuppressWarnings("WrongConstant")
     protected ClothingItem(Parcel in)
     {
+        id = in.readLong();
         name = in.readString();
-        imageUri = in.readParcelable(Uri.class.getClassLoader());
         waterResistance = in.readInt();
         windResistance = in.readInt();
         coldResistance = in.readInt();
@@ -105,8 +102,8 @@ public class ClothingItem implements Parcelable
     @Override
     public void writeToParcel(Parcel dest, int flags)
     {
+        dest.writeLong(id);
         dest.writeString(name);
-        dest.writeParcelable(imageUri, flags);
         dest.writeInt(waterResistance);
         dest.writeInt(windResistance);
         dest.writeInt(coldResistance);
@@ -141,7 +138,6 @@ public class ClothingItem implements Parcelable
     {
         return ClothingItem.builder()
                 .id(id)
-                .imageUri(imageUri)
                 .name(name)
                 .type(type)
                 .coldResistance(coldResistance)

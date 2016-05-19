@@ -72,6 +72,7 @@ public class ClothingActivity extends AppCompatActivity implements
         else
         {
             itemResParamFragment.setParamType(type);
+            itemResParamFragment.setCurrentItem(item);
         }
 
         getSupportFragmentManager()

@@ -1,24 +1,36 @@
 package example.com.capstoneproject.gui_layer.fragments;
 
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.soundcloud.android.crop.Crop;
+
+import java.io.File;
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 import butterknife.OnTextChanged;
 import example.com.capstoneproject.R;
 import example.com.capstoneproject.Utilities;
@@ -36,7 +48,11 @@ import lombok.Setter;
  */
 public class AddEditClothingFragment extends Fragment
 {
+    private final static String PHOTO_FILE_TEMPLATE = "item_photo_%s.jpg";
     private final static String TAG = AddEditClothingFragment.class.getSimpleName();
+
+    @BindView(R.id.no_photo_tv)
+    TextView noPhotoTv;
 
     @BindView(R.id.item_name_et)
     EditText nameEt;
@@ -64,6 +80,7 @@ public class AddEditClothingFragment extends Fragment
 
     private ClothingItem currentItem;
     private ClothingItem draftItem;
+    private boolean imageSet;
 
     @Setter
     private OnAddEditClothingInteractionListener listener;
@@ -88,7 +105,7 @@ public class AddEditClothingFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        if(currentItem == null && draftItem == null)
+        if (currentItem == null && draftItem == null)
             draftItem = new ClothingItem();
         resetViews();
         setFabsToAddEditMode(isAdding() || isEditing());
@@ -103,9 +120,67 @@ public class AddEditClothingFragment extends Fragment
             startCreatingNewItem();
     }
 
-    public void setItem(@Nullable  ClothingItem item)
+    @OnLongClick(R.id.item_photo_iv)
+    boolean onPhotoIvPressed()
     {
-        if(item != null)
+        Crop.pickImage(getActivity(), this);
+        return true;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Crop.REQUEST_PICK && resultCode == Activity.RESULT_OK)
+        {
+            //The id may either be actuall id or NO_ID for new items. This should later be reassigned
+            File file = createEmptyFile(getActivity(), draftItem.getId());
+            if (file != null)
+            {
+                Crop.of(data.getData(), Uri.fromFile(file))
+                        .withAspect(itemPhotoIv.getWidth(), itemPhotoIv.getHeight())
+                        .withMaxSize(itemPhotoIv.getWidth(), itemPhotoIv.getHeight())
+                        .start(getActivity(), this);
+            }
+        }
+
+        if (requestCode == Crop.REQUEST_CROP && resultCode == Activity.RESULT_OK)
+        {
+            File file = extractFileIfExists(getActivity(), draftItem.getId());
+            log(String.format("File is file => %s, exists => %s can read => %s", file.isFile(), file.exists(), file.canRead()));
+            resetViews();
+        }
+    }
+
+    public File createEmptyFile(Context context, long id)
+    {
+        // Get the directory for the app's private pictures directory.
+        File file = new File(context.getFilesDir(), String.format(PHOTO_FILE_TEMPLATE, id));
+        try
+        {
+            boolean fileCreated = file.createNewFile();
+            log("Created new file => " + fileCreated);
+        }
+        catch (IOException e)
+        {
+            log("IO exception while creating empty file => " + e);
+        }
+        return file;
+    }
+
+    public File extractFileIfExists(Context context, long id)
+    {
+        File file = new File(context.getFilesDir(), String.format(PHOTO_FILE_TEMPLATE, id));
+        log(String.format("File => %s, exists => %s, is file => %s", file.getAbsolutePath(), file.exists(), file.isFile()));
+        if (file.exists() && file.isFile())
+            return file;
+
+        return null;
+    }
+
+    public void setItem(@Nullable ClothingItem item)
+    {
+        if (item != null)
         {
             currentItem = item;
             draftItem = null;
@@ -115,7 +190,7 @@ public class AddEditClothingFragment extends Fragment
             currentItem = null;
             draftItem = new ClothingItem();
         }
-        if(getView() != null)
+        if (getView() != null)
         {
             resetViews();
             setFabsToAddEditMode(isAdding() || isEditing());
@@ -140,7 +215,14 @@ public class AddEditClothingFragment extends Fragment
         windResView.setCurrentFill(displayedItem.getWindResistance());
         coldResView.setCurrentFill(displayedItem.getColdResistance());
         clothingTypeIv.setImageResource(Utilities.getClothingTypeDrawableRes(displayedItem.getType()));
-        itemPhotoIv.setImageURI(displayedItem.getImageUri());
+        File imageFile = extractFileIfExists(getContext(), displayedItem.getId());
+        Uri imageUri = imageFile == null ? null : Uri.fromFile(imageFile);
+        imageSet = imageUri != null;
+        itemPhotoIv.setImageURI(imageUri);
+        if (imageUri == null)
+            noPhotoTv.setVisibility(View.VISIBLE);
+        else
+            noPhotoTv.setVisibility(View.GONE);
         processConfirmationBtnColor();
     }
 
@@ -151,9 +233,27 @@ public class AddEditClothingFragment extends Fragment
 
         if (isSaveAcceptable(draftItem))
         {
-            getContext().getContentResolver().insert(
-                    DataContract.ClothingEntry.CONTENT_URI,
-                    DataUtils.createValuesFromClothing(draftItem));
+            if (isAdding())
+            {
+                Uri resultUri = getContext().getContentResolver().insert(
+                        DataContract.ClothingEntry.CONTENT_URI,
+                        DataUtils.createValuesFromClothing(draftItem));
+
+                draftItem.setId(DataContract.ClothingEntry.extractIdFromUri(resultUri));
+                remapImageFileToId(draftItem.getId());
+            }
+            else if (isEditing())
+            {
+                if (draftItem.getId() == ClothingItem.NO_ID)
+                    throw new AssertionError("No id set in the draft item when it is updated. Item => " + draftItem);
+                getContext().getContentResolver().update(
+                        DataContract.ClothingEntry.CONTENT_URI,
+                        DataUtils.createValuesFromClothing(draftItem),
+                        String.format("%s = %s", DataContract.ClothingEntry._ID, draftItem.getId()),
+                        null
+                );
+            }
+
 
             currentItem = draftItem;
             draftItem = null;
@@ -164,6 +264,14 @@ public class AddEditClothingFragment extends Fragment
         {
             Toast.makeText(getContext(), "Not all data has been provided", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void remapImageFileToId(long newId)
+    {
+        File imageFile = extractFileIfExists(getContext(), ClothingItem.NO_ID);
+        boolean reanameSuccess = imageFile.renameTo(new File(getContext().getFilesDir(), String.format(PHOTO_FILE_TEMPLATE, newId)));
+        log("Successful rename => " + reanameSuccess);
+
     }
 
     private void setFabsToAddEditMode(boolean addEditMode)
@@ -186,7 +294,8 @@ public class AddEditClothingFragment extends Fragment
 
             VectorDrawableCompat cancelVector
                     = VectorDrawableCompat.create(getResources(), R.drawable.ic_edit, getContext().getTheme());
-            editCancelFab.setImageDrawable(cancelVector);        }
+            editCancelFab.setImageDrawable(cancelVector);
+        }
     }
 
     private void processConfirmationBtnColor()
@@ -211,7 +320,8 @@ public class AddEditClothingFragment extends Fragment
 
     private boolean isSaveAcceptable(@NonNull ClothingItem item)
     {
-        return (currentItem == null || item.getId() == currentItem.getId()) && item.getName() != null && item.getImageUri() != null;
+        return (currentItem == null || item.getId() == currentItem.getId()) && item.getName() != null
+                && !item.getName().isEmpty()&& imageSet;
     }
 
     @OnClick(R.id.edit_cancel_fab)
@@ -249,7 +359,7 @@ public class AddEditClothingFragment extends Fragment
 
     private void setEnableInput(boolean enableInput)
     {
-        if(enableInput)
+        if (enableInput)
         {
             waterResView.setClickable(true);
             windResView.setClickable(true);
@@ -306,6 +416,7 @@ public class AddEditClothingFragment extends Fragment
     void onItemNameChanged(CharSequence changedText)
     {
         draftItem.setName(changedText.toString());
+        processConfirmationBtnColor();
     }
 
     private boolean isEditing()
@@ -340,6 +451,11 @@ public class AddEditClothingFragment extends Fragment
     {
         draftItem.setType(type);
         resetViews();
+    }
+
+    private void log(String message)
+    {
+        Log.d(TAG, message);
     }
 
     public interface OnAddEditClothingInteractionListener

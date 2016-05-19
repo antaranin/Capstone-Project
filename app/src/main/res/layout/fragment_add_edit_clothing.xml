@@ -16,7 +16,7 @@
         />
 
     <TextView
-        android:id="@+id/add_image_info_tv"
+        android:id="@+id/no_photo_tv"
         style="@style/very_large_tv_style"
         android:text="Long press to add or change photo."
         android:textColor="@color/alterante_text"

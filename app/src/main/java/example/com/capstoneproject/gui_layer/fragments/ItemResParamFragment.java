@@ -122,7 +122,8 @@ public class ItemResParamFragment extends Fragment
         {
             resistance = ClothingItem.NO_RES;
         }
-        processResistance(resistance);
+        if(getContext() != null)
+            processResistance(resistance);
     }
 
     @DebugLog
@@ -182,6 +183,7 @@ public class ItemResParamFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        processResistance(resistance);
         resetTypeViews();
     }
 
