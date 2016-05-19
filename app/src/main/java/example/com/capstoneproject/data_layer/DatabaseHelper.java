@@ -16,11 +16,11 @@ public class DatabaseHelper extends SQLiteOpenHelper
             "CREATE TABLE %s(" +
                     "%s INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "%s TEXT NOT NULL, %s INTEGER NOT NULL, %s INTEGER NOT NULL, " +
-                    "%s INTEGER NOT NULL, %s INTEGER NOT NULL)",
+                    "%s INTEGER NOT NULL, %s INTEGER NOT NULL, %s TEXT NOT NULL)",
             DataContract.ClothingEntry.TABLE_NAME,
             DataContract.ClothingEntry._ID,
             DataContract.ClothingEntry.NAME, DataContract.ClothingEntry.TYPE, DataContract.ClothingEntry.WATER_RES,
-            DataContract.ClothingEntry.WIND_RES, DataContract.ClothingEntry.COLD_RES);
+            DataContract.ClothingEntry.WIND_RES, DataContract.ClothingEntry.COLD_RES, DataContract.ClothingEntry.IMAGE_URI);
 
     public DatabaseHelper(Context context)
     {

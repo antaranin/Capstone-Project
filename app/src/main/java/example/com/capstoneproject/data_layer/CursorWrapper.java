@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 
 /**
@@ -16,6 +18,7 @@ import lombok.NonNull;
  */
 public abstract class CursorWrapper<T>
 {
+    @Getter(AccessLevel.PROTECTED)
     private Cursor cursor;
 
     public CursorWrapper(@NonNull Cursor cursor)

@@ -60,6 +60,11 @@ public abstract class SingleSelectionAdapter<VH extends SingleSelectionAdapter.S
         changeSelection(selection);
     }
 
+    public int getSelection()
+    {
+        return selected_item;
+    }
+
     public abstract class SingleSelectionHolder extends RecyclerView.ViewHolder
     {
         public SingleSelectionHolder(View itemView)

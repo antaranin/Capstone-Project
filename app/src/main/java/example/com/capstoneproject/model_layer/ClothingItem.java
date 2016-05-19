@@ -1,5 +1,6 @@
 package example.com.capstoneproject.model_layer;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.IntDef;
@@ -42,6 +43,7 @@ public class ClothingItem implements Parcelable
 
     private long id = NO_ID;
     private String name;
+    private Uri imageUri;
 
     @Resistance
     private int waterResistance = NO_RES;
@@ -57,11 +59,12 @@ public class ClothingItem implements Parcelable
     }
 
     @Builder
-    public ClothingItem(Long id, String name, int waterResistance, int windResistance, int coldResistance, int type)
+    public ClothingItem(Long id, String name, int waterResistance, int windResistance, int coldResistance, int type, Uri imageUri)
     {
         this.id = id != null ? id : NO_ID;
         this.name = name;
         this.waterResistance = waterResistance;
+        this.imageUri = imageUri;
         this.windResistance = windResistance;
         this.coldResistance = coldResistance;
         this.type = type;
@@ -72,6 +75,7 @@ public class ClothingItem implements Parcelable
     {
         id = in.readLong();
         name = in.readString();
+        imageUri = Uri.parse(in.readString());
         waterResistance = in.readInt();
         windResistance = in.readInt();
         coldResistance = in.readInt();
@@ -104,6 +108,7 @@ public class ClothingItem implements Parcelable
     {
         dest.writeLong(id);
         dest.writeString(name);
+        dest.writeString(imageUri.toString());
         dest.writeInt(waterResistance);
         dest.writeInt(windResistance);
         dest.writeInt(coldResistance);
@@ -140,6 +145,7 @@ public class ClothingItem implements Parcelable
                 .id(id)
                 .name(name)
                 .type(type)
+                .imageUri(imageUri)
                 .coldResistance(coldResistance)
                 .windResistance(windResistance)
                 .waterResistance(waterResistance)

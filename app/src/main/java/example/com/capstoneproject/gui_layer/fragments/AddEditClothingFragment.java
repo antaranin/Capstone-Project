@@ -80,7 +80,6 @@ public class AddEditClothingFragment extends Fragment
 
     private ClothingItem currentItem;
     private ClothingItem draftItem;
-    private boolean imageSet;
 
     @Setter
     private OnAddEditClothingInteractionListener listener;
@@ -147,6 +146,7 @@ public class AddEditClothingFragment extends Fragment
         if (requestCode == Crop.REQUEST_CROP && resultCode == Activity.RESULT_OK)
         {
             File file = extractFileIfExists(getActivity(), draftItem.getId());
+            draftItem.setImageUri(Uri.fromFile(file));
             log(String.format("File is file => %s, exists => %s can read => %s", file.isFile(), file.exists(), file.canRead()));
             resetViews();
         }
@@ -217,7 +217,6 @@ public class AddEditClothingFragment extends Fragment
         clothingTypeIv.setImageResource(Utilities.getClothingTypeDrawableRes(displayedItem.getType()));
         File imageFile = extractFileIfExists(getContext(), displayedItem.getId());
         Uri imageUri = imageFile == null ? null : Uri.fromFile(imageFile);
-        imageSet = imageUri != null;
         itemPhotoIv.setImageURI(imageUri);
         if (imageUri == null)
             noPhotoTv.setVisibility(View.VISIBLE);
@@ -240,7 +239,7 @@ public class AddEditClothingFragment extends Fragment
                         DataUtils.createValuesFromClothing(draftItem));
 
                 draftItem.setId(DataContract.ClothingEntry.extractIdFromUri(resultUri));
-                remapImageFileToId(draftItem.getId());
+                remapImageFileToId(draftItem);
             }
             else if (isEditing())
             {
@@ -266,11 +265,18 @@ public class AddEditClothingFragment extends Fragment
         }
     }
 
-    private void remapImageFileToId(long newId)
+    private void remapImageFileToId(ClothingItem item)
     {
         File imageFile = extractFileIfExists(getContext(), ClothingItem.NO_ID);
-        boolean reanameSuccess = imageFile.renameTo(new File(getContext().getFilesDir(), String.format(PHOTO_FILE_TEMPLATE, newId)));
+        boolean reanameSuccess = imageFile.renameTo(new File(getContext().getFilesDir(), String.format(PHOTO_FILE_TEMPLATE, item.getId())));
         log("Successful rename => " + reanameSuccess);
+        item.setImageUri(Uri.fromFile(imageFile));
+        getContext().getContentResolver().update(
+                DataContract.ClothingEntry.CONTENT_URI,
+                DataUtils.createValuesFromClothing(item),
+                String.format("%s = %s", DataContract.ClothingEntry._ID, item.getId()),
+                null
+        );
 
     }
 
@@ -321,7 +327,7 @@ public class AddEditClothingFragment extends Fragment
     private boolean isSaveAcceptable(@NonNull ClothingItem item)
     {
         return (currentItem == null || item.getId() == currentItem.getId()) && item.getName() != null
-                && !item.getName().isEmpty()&& imageSet;
+                && !item.getName().isEmpty() && draftItem.getImageUri() != null;
     }
 
     @OnClick(R.id.edit_cancel_fab)
@@ -345,6 +351,13 @@ public class AddEditClothingFragment extends Fragment
 
     private void cancelChanges()
     {
+        if(isAdding())
+        {
+            File imageFile = extractFileIfExists(getContext(), draftItem.getId());
+            if(imageFile != null)
+                imageFile.delete();
+        }
+
         if (currentItem == null)
         {
             listener.onAddingCanceled();

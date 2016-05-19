@@ -30,6 +30,7 @@ public class DataContract
         public static final String WATER_RES = "clothing_water_resistance";
         public static final String WIND_RES = "clothing_wind_resistance";
         public static final String COLD_RES = "clothing_cold_resistance";
+        public static final String IMAGE_URI = "clothing_item_uri";
 
 
         public static Uri buildClothingUri(long id)
@@ -41,5 +42,6 @@ public class DataContract
         {
             return  ContentUris.parseId(uri);
         }
+
     }
 }

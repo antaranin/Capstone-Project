@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import hugo.weaving.DebugLog;
+
 /**
  * Created by Arin on 16/05/16.
  */
@@ -29,6 +31,7 @@ public class DataProvider extends ContentProvider
 
     @Nullable
     @Override
+    @DebugLog
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
     {
         final int match = uriMatcher.match(uri);
@@ -71,6 +74,7 @@ public class DataProvider extends ContentProvider
 
     @Nullable
     @Override
+    @DebugLog
     public Uri insert(@NonNull Uri uri, ContentValues values)
     {
         final int match = uriMatcher.match(uri);
@@ -93,6 +97,7 @@ public class DataProvider extends ContentProvider
     }
 
     @Override
+    @DebugLog
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs)
     {
         final int match = uriMatcher.match(uri);
@@ -114,6 +119,7 @@ public class DataProvider extends ContentProvider
     }
 
     @Override
+    @DebugLog
     public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs)
     {
         final int match = uriMatcher.match(uri);
