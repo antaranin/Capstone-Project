@@ -3,6 +3,7 @@ package example.com.capstoneproject.data_layer;
 import android.content.ContentValues;
 
 import example.com.capstoneproject.model_layer.ClothingItem;
+import hugo.weaving.DebugLog;
 
 /**
  * Created by Arin on 18/05/16.
@@ -10,6 +11,7 @@ import example.com.capstoneproject.model_layer.ClothingItem;
 public class DataUtils
 {
 
+    @DebugLog
     public static ContentValues createValuesFromClothing(ClothingItem clothingItem)
     {
         ContentValues values = new ContentValues();

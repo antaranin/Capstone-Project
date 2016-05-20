@@ -1,6 +1,7 @@
 package example.com.capstoneproject;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import hugo.weaving.DebugLog;
@@ -81,6 +82,11 @@ public abstract class SingleSelectionAdapter<VH extends SingleSelectionAdapter.S
         }
 
         public abstract void onHolderPressed();
+    }
+
+    private void log(String message)
+    {
+        Log.d(this.getClass().getSimpleName(), message);
     }
 }
 

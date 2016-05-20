@@ -12,6 +12,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -31,7 +33,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
-import butterknife.OnTextChanged;
 import example.com.capstoneproject.R;
 import example.com.capstoneproject.Utilities;
 import example.com.capstoneproject.data_layer.DataContract;
@@ -39,6 +40,8 @@ import example.com.capstoneproject.data_layer.DataUtils;
 import example.com.capstoneproject.gui_layer.FillableView;
 import example.com.capstoneproject.model_layer.ClothingItem;
 import hugo.weaving.DebugLog;
+import icepick.Icepick;
+import icepick.State;
 import lombok.NonNull;
 import lombok.Setter;
 
@@ -49,7 +52,6 @@ import lombok.Setter;
 public class AddEditClothingFragment extends Fragment
 {
     private final static String PHOTO_FILE_TEMPLATE = "item_photo_%s.jpg";
-    private final static String TAG = AddEditClothingFragment.class.getSimpleName();
 
     @BindView(R.id.no_photo_tv)
     TextView noPhotoTv;
@@ -78,11 +80,15 @@ public class AddEditClothingFragment extends Fragment
     @BindView(R.id.item_photo_iv)
     ImageView itemPhotoIv;
 
-    private ClothingItem currentItem;
-    private ClothingItem draftItem;
+    @State
+    ClothingItem currentItem;
+    @State
+    ClothingItem draftItem;
 
     @Setter
     private OnAddEditClothingInteractionListener listener;
+
+    private NameChangeWatcher textWatcher;
 
 
     public AddEditClothingFragment()
@@ -91,6 +97,7 @@ public class AddEditClothingFragment extends Fragment
     }
 
     @Override
+    @DebugLog
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
@@ -99,15 +106,55 @@ public class AddEditClothingFragment extends Fragment
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this, outState);
+    }
+
+    @Override
     @DebugLog
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
+        ClothingItem preSetCurrentItem = currentItem;
+        ClothingItem preSetDraftItem = draftItem;
+        textWatcher = new NameChangeWatcher();
+        if (savedInstanceState != null)
+            Icepick.restoreInstanceState(this, savedInstanceState);
+
+        //This is necessary for when the items are set before restoration is called.
+        if (preSetCurrentItem != null)
+            currentItem = preSetCurrentItem;
+
+        if (preSetDraftItem != null)
+            draftItem = preSetDraftItem;
+
         ButterKnife.bind(this, view);
         if (currentItem == null && draftItem == null)
             draftItem = new ClothingItem();
         resetViews();
         setFabsToAddEditMode(isAdding() || isEditing());
+        setEnableInput(isAdding() || isEditing());
+
+    }
+
+    @Override
+    @DebugLog
+    public void onResume()
+    {
+        super.onResume();
+        //This needs to be moved here from onViewsCreated because EditText is having problems with changing text at that point…
+        ClothingItem displayedItem = draftItem == null ? currentItem : draftItem;
+        changeDisplayedName(displayedItem.getName());
+        nameEt.addTextChangedListener(textWatcher);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        nameEt.removeTextChangedListener(textWatcher);
     }
 
     @OnClick(R.id.add_confirm_fab)
@@ -171,19 +218,31 @@ public class AddEditClothingFragment extends Fragment
     public File extractFileIfExists(Context context, long id)
     {
         File file = new File(context.getFilesDir(), String.format(PHOTO_FILE_TEMPLATE, id));
-        log(String.format("File => %s, exists => %s, is file => %s", file.getAbsolutePath(), file.exists(), file.isFile()));
+        //log(String.format("File => %s, exists => %s, is file => %s", file.getAbsolutePath(), file.exists(), file.isFile()));
         if (file.exists() && file.isFile())
             return file;
 
         return null;
     }
 
-    public void setItem(@Nullable ClothingItem item)
+    @DebugLog
+    public void setItemForEdit(@NonNull ClothingItem item)
+    {
+        currentItem = item;
+        draftItem = item.copy();
+        if (getView() == null)
+            return;
+
+        resetViews();
+        startEditingItem();
+    }
+
+/*    public void setItem(@Nullable ClothingItem item)
     {
         if (item != null)
         {
             currentItem = item;
-            draftItem = null;
+            draftItem = isEditing() ? item.copy() : null;
         }
         else
         {
@@ -195,7 +254,7 @@ public class AddEditClothingFragment extends Fragment
             resetViews();
             setFabsToAddEditMode(isAdding() || isEditing());
         }
-    }
+    }*/
 
     private void startCreatingNewItem()
     {
@@ -225,8 +284,17 @@ public class AddEditClothingFragment extends Fragment
         processConfirmationBtnColor();
     }
 
+    @DebugLog
+    private void changeDisplayedName(String name)
+    {
+        textWatcher.automaticNameChange = true;
+        nameEt.setText(name != null ? name : "");
+        nameEt.invalidate();
+    }
+
     private void trySavingChanges()
     {
+        log("Saving changes, draft item => " + draftItem);
         if (draftItem == null)
             throw new AssertionError("Draft item cannot be null when attempting to save changes");
 
@@ -258,6 +326,7 @@ public class AddEditClothingFragment extends Fragment
             draftItem = null;
             resetViews();
             setFabsToAddEditMode(false);
+            setEnableInput(false);
         }
         else
         {
@@ -270,7 +339,7 @@ public class AddEditClothingFragment extends Fragment
         File imageFile = extractFileIfExists(getContext(), ClothingItem.NO_ID);
         boolean reanameSuccess = imageFile.renameTo(new File(getContext().getFilesDir(), String.format(PHOTO_FILE_TEMPLATE, item.getId())));
         log("Successful rename => " + reanameSuccess);
-        item.setImageUri(Uri.fromFile(imageFile));
+        item.setImageUri(Uri.fromFile(extractFileIfExists(getContext(), item.getId())));
         getContext().getContentResolver().update(
                 DataContract.ClothingEntry.CONTENT_URI,
                 DataUtils.createValuesFromClothing(item),
@@ -306,7 +375,7 @@ public class AddEditClothingFragment extends Fragment
 
     private void processConfirmationBtnColor()
     {
-        if (!isEditing() || !isAdding())
+        if (!isEditing() && !isAdding())
             return;
 
         if (isSaveAcceptable(draftItem))
@@ -327,7 +396,7 @@ public class AddEditClothingFragment extends Fragment
     private boolean isSaveAcceptable(@NonNull ClothingItem item)
     {
         return (currentItem == null || item.getId() == currentItem.getId()) && item.getName() != null
-                && !item.getName().isEmpty() && draftItem.getImageUri() != null;
+                && !item.getName().isEmpty() && item.getImageUri() != null;
     }
 
     @OnClick(R.id.edit_cancel_fab)
@@ -351,10 +420,10 @@ public class AddEditClothingFragment extends Fragment
 
     private void cancelChanges()
     {
-        if(isAdding())
+        if (isAdding())
         {
             File imageFile = extractFileIfExists(getContext(), draftItem.getId());
-            if(imageFile != null)
+            if (imageFile != null)
                 imageFile.delete();
         }
 
@@ -425,13 +494,6 @@ public class AddEditClothingFragment extends Fragment
             listener.onRequestParamPick(ItemResParamFragment.COLD_RES, draftItem);
     }
 
-    @OnTextChanged(R.id.item_name_et)
-    void onItemNameChanged(CharSequence changedText)
-    {
-        draftItem.setName(changedText.toString());
-        processConfirmationBtnColor();
-    }
-
     private boolean isEditing()
     {
         return currentItem != null && draftItem != null;
@@ -444,7 +506,9 @@ public class AddEditClothingFragment extends Fragment
 
     public void setItemColdRes(@ClothingItem.Resistance int resistance)
     {
+        log("Cold res before setting => " + draftItem.getColdResistance());
         draftItem.setColdResistance(resistance);
+        log("Cold res after setting => " + draftItem.getColdResistance());
         resetViews();
     }
 
@@ -468,7 +532,7 @@ public class AddEditClothingFragment extends Fragment
 
     private void log(String message)
     {
-        Log.d(TAG, message);
+        Log.d(this.getClass().getSimpleName(), message);
     }
 
     public interface OnAddEditClothingInteractionListener
@@ -478,5 +542,37 @@ public class AddEditClothingFragment extends Fragment
         void onRequestTypePick(ClothingItem item);
 
         void onAddingCanceled();
+    }
+
+    private class NameChangeWatcher implements TextWatcher
+    {
+        private boolean automaticNameChange = false;
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after)
+        {
+
+        }
+
+        @Override
+        @DebugLog
+        public void onTextChanged(CharSequence s, int start, int before, int count)
+        {
+            if (automaticNameChange)
+            {
+                automaticNameChange = false;
+                return;
+            }
+            if (draftItem != null)
+            {
+                draftItem.setName(s.toString());
+                processConfirmationBtnColor();
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s)
+        {
+
+        }
     }
 }

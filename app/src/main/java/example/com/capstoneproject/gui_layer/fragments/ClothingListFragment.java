@@ -86,6 +86,7 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         clothingAdapter = new ClothingAdapter();
+        clothingAdapter.setListener(this);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         recycler.setAdapter(clothingAdapter);
     }
@@ -178,6 +179,21 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
         setPreviewItem(selectedItem);
     }
 
+    @Override
+    public void onItemEditRequested(ClothingItem item)
+    {
+        if(listener != null)
+            listener.onEditItemRequested(item);
+    }
+
+    @Override
+    public void onItemDeleteRequested(ClothingItem item)
+    {
+        String whereClause = String.format("%s = %s", DataContract.ClothingEntry._ID, item.getId());
+        getContext().getContentResolver()
+                .delete(DataContract.ClothingEntry.CONTENT_URI, whereClause, null);
+    }
+
     private void setPreviewItem(ClothingItem item)
     {
         if (item == null)
@@ -186,11 +202,20 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
             return;
         }
 
+
+        if(previewLayout.getVisibility() == View.GONE)
+            previewLayout.setVisibility(View.VISIBLE);
+
         coldResFv.setCurrentFill(item.getColdResistance());
         waterResFv.setCurrentFill(item.getWaterResistance());
         windResFv.setCurrentFill(item.getWindResistance());
         clothingTypeIv.setImageResource(Utilities.getClothingTypeDrawableRes(item.getType()));
-        Picasso.with(getActivity()).load(item.getImageUri()).into(photoPreviewIv);
+        log("Loaded uir => " + item.getImageUri());
+        Picasso.with(getContext())
+                .load(item.getImageUri().toString())
+                .resize(photoPreviewIv.getWidth(), photoPreviewIv.getHeight())
+                .centerCrop()
+                .into(photoPreviewIv);
 
     }
 

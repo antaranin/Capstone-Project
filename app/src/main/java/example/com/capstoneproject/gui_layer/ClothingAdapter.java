@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -40,7 +42,6 @@ public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.Clot
             throw new RuntimeException("Not bound to RecyclerView");
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.clothing_recycler_item, parent, false);
-        view.setFocusable(true);
         return new ClothingViewHolder(view);
     }
 
@@ -48,6 +49,7 @@ public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.Clot
     @DebugLog
     public void onBindViewHolder(ClothingViewHolder holder, int position)
     {
+        super.onBindViewHolder(holder, position);
         cursor.moveToPosition(position);
         ClothingItem clothingItem = cursor.getItem();
         holder.name_tv.setText(clothingItem.getName());
@@ -75,18 +77,20 @@ public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.Clot
         notifyDataSetChanged();
         if (oldDataAvailable != newDataAvailable && listener != null)
             listener.onDataAvailabilityChanged(!newDataAvailable);
+        resetSelection();
     }
 
     public void selectItem(int position)
     {
-        selectItem(position, true);
+        selectItem(position, false);
     }
 
     private void selectItem(int position, boolean userCalled)
     {
         if (cursor.getCount() <= position)
             throw new AssertionError("The position provided is outside of data range");
-        setSelection(position);
+        if(!userCalled)
+            setSelection(position);
 
         if (listener != null && userCalled)
         {
@@ -95,8 +99,14 @@ public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.Clot
         }
     }
 
+    private ClothingItem getItemAt(int adapterPosition)
+    {
+        cursor.moveToPosition(adapterPosition);
+        return cursor.getItem();
+    }
+
     public class ClothingViewHolder extends SingleSelectionAdapter.SingleSelectionHolder
-            implements View.OnCreateContextMenuListener
+            implements View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener
     {
         @BindView(R.id.item_name_tv_cri)
         TextView name_tv;
@@ -114,14 +124,37 @@ public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.Clot
         @Override
         public void onHolderPressed()
         {
-            selectItem(getAdapterPosition());
+            selectItem(getAdapterPosition(), true);
         }
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
         {
-            menu.add(0, v.getId(), 0, R.string.edit);
-            menu.add(0, v.getId(), 0, R.string.delete);
+            MenuItem editItem = menu.add(0, R.id.edit_menu_btn, Menu.NONE, R.string.edit);
+            editItem.setOnMenuItemClickListener(this);
+            MenuItem deleteItem = menu.add(0, R.id.delete_menu_btn, Menu.NONE, R.string.delete);
+            deleteItem.setOnMenuItemClickListener(this);
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item)
+        {
+            if(listener != null)
+            {
+                int itemId = item.getItemId();
+                switch (itemId)
+                {
+                    case R.id.edit_menu_btn:
+                        listener.onItemEditRequested(getItemAt(getAdapterPosition()));
+                        break;
+                    case R.id.delete_menu_btn:
+                        listener.onItemDeleteRequested(getItemAt(getAdapterPosition()));
+                        break;
+                    default:
+                        throw new RuntimeException("Unexpected menu btn pressed with id => " + itemId);
+                }
+            }
+            return true;
         }
     }
 
@@ -130,5 +163,9 @@ public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.Clot
         void onDataAvailabilityChanged(boolean available);
 
         void onItemSelected(ClothingItem selectedItem);
+
+        void onItemEditRequested(ClothingItem item);
+
+        void onItemDeleteRequested(ClothingItem item);
     }
 }

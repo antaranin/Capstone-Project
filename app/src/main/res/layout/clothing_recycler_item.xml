@@ -4,6 +4,8 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/selectable_background"
+    android:focusable="true"
     >
 
     <ImageView
@@ -13,6 +15,7 @@
         android:src="@drawable/ic_t_shirt"
         android:layout_margin="@dimen/small_margin_padding"
         />
+
     <TextView
         android:id="@+id/item_name_tv_cri"
         android:layout_width="wrap_content"

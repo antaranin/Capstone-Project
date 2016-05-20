@@ -4,11 +4,13 @@
     <item
         android:state_selected="false"
         android:drawable="@android:color/transparent"/>
+
     <item
         android:state_pressed="true"
         android:state_selected="false"
-        android:drawable="?attr/colorAccent"/>
+        android:drawable="@color/accent"/>
+
     <item
         android:state_selected="true"
-        android:drawable="?attr/colorAccent"/>
+        android:drawable="@color/accent"/>
 </selector>
