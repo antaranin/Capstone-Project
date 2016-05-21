@@ -3,6 +3,7 @@
           xmlns:android="http://schemas.android.com/apk/res/android"
     >
 
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
@@ -28,6 +29,8 @@
             >
         </activity>
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
+        public final static String LOCATION_BROADCAST = "location_broadcast";
+        public final static String LOCATION_BROADCAST = "location_broadcast";
 
         <provider
             android:name=".data_layer.DataProvider"
@@ -64,10 +67,16 @@
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>
             </intent-filter>
+
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator"
                 />
+        </service>
+        <service
+            android:name=".management_layer.web_services.WeatherUpdateService"
+            android:exported="false"
+            >
         </service>
     </application>
 

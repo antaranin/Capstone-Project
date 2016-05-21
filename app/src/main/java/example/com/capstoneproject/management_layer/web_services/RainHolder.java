@@ -12,5 +12,5 @@ public class RainHolder
 {
 
     @SerializedName("3h")
-    private int precipitationPer3H;
+    private float precipitationPer3H;
 }

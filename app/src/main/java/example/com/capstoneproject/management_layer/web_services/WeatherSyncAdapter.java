@@ -28,7 +28,6 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -54,13 +53,12 @@ import lombok.NonNull;
  */
 public class WeatherSyncAdapter extends AbstractThreadedSyncAdapter
 {
-    private final static String LOCATION_BROADCAST = "location_broadcast";
-    private final static String FORECAST_BASE_URL_TEMPLATE =
-            "http://api.openweathermap.org/data/2.5/weather?";
+    private final static String FORECAST_BASE_URL_TEMPLATE = "http://api.openweathermap.org/data/2.5/weather?";
     private static final int SYNC_INTERVAL = 60 * 60 * 3;
     private static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
     private static final int PERMISSION_NOTIF_ID = 333;
     private static final String TAG = WeatherSyncAdapter.class.getSimpleName();
+    private PendingIntent locationIntent;
     private GoogleApiClient googleApiClient;
 
     public WeatherSyncAdapter(Context context, boolean autoInitialize)
@@ -155,25 +153,72 @@ public class WeatherSyncAdapter extends AbstractThreadedSyncAdapter
             showPermissionRequiredNotification();
             return;
         }
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(new WeatherUpdateFinisedReceiver(),
+                new IntentFilter(Utilities.WEATHER_ITEM_UPDATED_BROADCAST));
+
         logd("Permissions ok");
         //We are already in background, no point in playing it async
         ConnectionResult connectionResult = googleApiClient.blockingConnect(20, TimeUnit.SECONDS);
-        if(connectionResult.isSuccess())
+        if (connectionResult.isSuccess())
         {
             logd("Connection successful");
-            //Location userLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            LocalBroadcastManager.getInstance(getContext()).registerReceiver(new LocationReceiver(), new IntentFilter(LOCATION_BROADCAST));
-            LocationRequest locationRequest = LocationRequest.create();
-            locationRequest.setNumUpdates(1);
-            Intent intent = new Intent(LOCATION_BROADCAST);
-            PendingIntent locationIntent = PendingIntent.getBroadcast(getContext(), 14872, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            LocationRequest locationRequest = LocationRequest.create()
+                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                    .setInterval(10000)
+                    .setExpirationDuration(30 * 1000)
+                    .setFastestInterval(1000);
+            if(locationIntent == null)
+            {
+
+                Intent intent = new Intent(getContext(), WeatherUpdateService.class);
+                intent.setAction(WeatherUpdateService.CHECK_WEATHER_FOR_LOCATION);
+                locationIntent = PendingIntent.getService(
+                        getContext(),
+                        0,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+            }
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, locationIntent);
+/*            Location userLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+
+            log("User location => " + userLocation);
+            if(userLocation == null)
+                return;
+
+            WeatherResponse response = requestTodayForecast(userLocation);
+            processWeatherResponse(response);*/
         }
         //TODO  maybe add exponential backoff at some later date?
     }
 
     @DebugLog
-    private WeatherResponse requestTodayForecast(@NonNull  Location userLocation)
+    private void showPermissionRequiredNotification()
+    {
+        NotificationCompat.Builder notifBuilder =
+                new NotificationCompat.Builder(getContext())
+                        .setColor(ContextCompat.getColor(getContext(), R.color.primary_light))
+                        //TODO change to some more meaningful icons
+                        .setSmallIcon(R.drawable.ic_confirm)
+                        .setContentTitle("Location permission required")
+                        .setContentText("Location permission is required to download weather data.");
+
+        Intent resultIntent = new Intent(getContext(), PermisionActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(getContext());
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(
+                0,
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+        notifBuilder.setContentIntent(resultPendingIntent);
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        // WEATHER_NOTIFICATION_ID allows you to update the notification later on.
+        mNotificationManager.notify(PERMISSION_NOTIF_ID, notifBuilder.build());
+    }
+
+    @DebugLog
+    private WeatherResponse requestTodayForecast(@NonNull Location userLocation)
     {
         final int timeout = 1000 * 10;
         final String latKey = "lat";
@@ -205,7 +250,7 @@ public class WeatherSyncAdapter extends AbstractThreadedSyncAdapter
     @DebugLog
     private void processWeatherResponse(WeatherResponse response)
     {
-        if(isValidResponse(response))
+        if (isValidResponse(response))
             processValidWeatherResponse(response);
         else
             log("Response was invalid => " + response);
@@ -234,32 +279,6 @@ public class WeatherSyncAdapter extends AbstractThreadedSyncAdapter
                 && response.getWeather() != null && !response.getWeather().isEmpty();
     }
 
-    @DebugLog
-    private void showPermissionRequiredNotification()
-    {
-        NotificationCompat.Builder notifBuilder =
-                new NotificationCompat.Builder(getContext())
-                        .setColor(ContextCompat.getColor(getContext(), R.color.primary_light))
-                        //TODO change to some more meaningful icons
-                        .setSmallIcon(R.drawable.ic_confirm)
-                        .setContentTitle("Location permission required")
-                        .setContentText("Location permission is required to download weather data.");
-
-        Intent resultIntent = new Intent(getContext(), PermisionActivity.class);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(getContext());
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(
-                0,
-                PendingIntent.FLAG_UPDATE_CURRENT
-        );
-        notifBuilder.setContentIntent(resultPendingIntent);
-
-        NotificationManager mNotificationManager =
-                (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        // WEATHER_NOTIFICATION_ID allows you to update the notification later on.
-        mNotificationManager.notify(PERMISSION_NOTIF_ID, notifBuilder.build());
-    }
-
     private void logd(String message)
     {
         Log.d(TAG, message);
@@ -274,22 +293,22 @@ public class WeatherSyncAdapter extends AbstractThreadedSyncAdapter
     {
         Log.e(TAG, message, exception);
     }
-
-    private class LocationReceiver extends BroadcastReceiver
+    private class WeatherUpdateFinisedReceiver extends BroadcastReceiver
     {
+
+        public WeatherUpdateFinisedReceiver()
+        {
+        }
+
         @Override
-        @DebugLog
         public void onReceive(Context context, Intent intent)
         {
-            LocalBroadcastManager.getInstance(context).unregisterReceiver(this);
-            if(!LocationResult.hasResult(intent))
-                return;
-
-            LocationResult result = LocationResult.extractResult(intent);
-            Location userLocation = result.getLastLocation();
-
-            WeatherResponse response = requestTodayForecast(userLocation);
-            processWeatherResponse(response);
+            if(Utilities.equals(intent.getAction(), Utilities.WEATHER_ITEM_UPDATED_BROADCAST))
+            {
+                if(googleApiClient.isConnected())
+                    LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, locationIntent);
+                LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(this);
+            }
         }
     }
 }

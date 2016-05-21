@@ -39,7 +39,7 @@ public class WeatherPreferenceModule extends TrayModulePreferences
         put(TEMPERATURE, temperature);
     }
 
-    public void setPrecipitation(int precipitation)
+    public void setPrecipitation(float precipitation)
     {
         put(PRECIPITATION, precipitation);
     }
@@ -70,7 +70,7 @@ public class WeatherPreferenceModule extends TrayModulePreferences
         int weatherType = getInt(WEATHER_TYPE, noValue);
         int windSpeed = getInt(WIND_SPEED, noValue);
         int temperature = getInt(TEMPERATURE, noValue);
-        int precipitation = getInt(PRECIPITATION, noValue);
+        float precipitation = getFloat(PRECIPITATION, noValue);
         if(weatherType == noValue || windSpeed == noValue || temperature == noValue || precipitation == noValue)
             return null;
 

@@ -34,7 +34,7 @@ public class WeatherItem implements Parcelable
     @WeatherType
     private int weatherType;
     private int windSpeed;
-    private int rainPrecipitate;
+    private float rainPrecipitate;
     private int temperature;
 
     protected WeatherItem(Parcel in)
@@ -42,7 +42,7 @@ public class WeatherItem implements Parcelable
         //noinspection WrongConstant
         weatherType = in.readInt();
         windSpeed = in.readInt();
-        rainPrecipitate = in.readInt();
+        rainPrecipitate = in.readFloat();
         temperature = in.readInt();
     }
 
@@ -51,7 +51,7 @@ public class WeatherItem implements Parcelable
     }
 
     @Builder
-    public WeatherItem(int weatherType, int windSpeed, int rainPrecipitate, int temperature)
+    public WeatherItem(int weatherType, int windSpeed, float rainPrecipitate, int temperature)
     {
         this.weatherType = weatherType;
         this.windSpeed = windSpeed;
@@ -85,7 +85,7 @@ public class WeatherItem implements Parcelable
     {
         dest.writeInt(weatherType);
         dest.writeInt(windSpeed);
-        dest.writeInt(rainPrecipitate);
+        dest.writeFloat(rainPrecipitate);
         dest.writeInt(temperature);
     }
 
