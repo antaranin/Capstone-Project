@@ -2,6 +2,7 @@ package example.com.capstoneproject.management_layer;
 
 import android.content.Context;
 import android.support.annotation.DrawableRes;
+import android.support.v4.util.Pair;
 
 import example.com.capstoneproject.R;
 import example.com.capstoneproject.data_layer.WeatherItem;
@@ -101,15 +102,15 @@ public class Utilities
         {
             case ClothingItem.T_SHIRT:
                 return R.drawable.ic_t_shirt;
-            case ClothingItem.HAT:
-                throw new UnsupportedOperationException("Unsupported type => " + type);
             case ClothingItem.JACKET:
                 throw new UnsupportedOperationException("Unsupported type => " + type);
             case ClothingItem.SHIRT:
                 throw new UnsupportedOperationException("Unsupported type => " + type);
-            case ClothingItem.SHOES:
-                throw new UnsupportedOperationException("Unsupported type => " + type);
             case ClothingItem.TROUSERS:
+                throw new UnsupportedOperationException("Unsupported type => " + type);
+            case ClothingItem.BLOUSE:
+                throw new UnsupportedOperationException("Unsupported type => " + type);
+            case ClothingItem.SKIRT:
                 throw new UnsupportedOperationException("Unsupported type => " + type);
             default:
                 throw new UnsupportedOperationException("Unsupported type => " + type);
@@ -182,4 +183,107 @@ public class Utilities
 
         return object1.equals(object2);
     }
+
+    public static Pair<Integer, Integer> getColdResTemperatureFork(@ClothingItem.Resistance int coldRes)
+    {
+        switch (coldRes)
+        {
+            case ClothingItem.HIGH_RES:
+                return new Pair<>(0, 10);
+            case ClothingItem.LIGHT_RES:
+                return new Pair<>(15, 20);
+            case ClothingItem.MEDIUM_RES:
+                return new Pair<>(10, 15);
+            case ClothingItem.NO_RES:
+                return new Pair<>(20, null);
+            case ClothingItem.VERY_HIGH_RES:
+                return new Pair<>(null, 0);
+            default:
+                throw new UnsupportedOperationException("Unsupported resistance level => " + coldRes);
+        }
+    }
+
+    @ClothingItem.Resistance
+    public static int getOptimalColdResFromTemperature(int temperature)
+    {
+        if(temperature < 0)
+            return ClothingItem.VERY_HIGH_RES;
+        else if(temperature < 10)
+            return ClothingItem.HIGH_RES;
+        else if(temperature < 15)
+            return ClothingItem.MEDIUM_RES;
+        else if(temperature < 20)
+            return ClothingItem.LIGHT_RES;
+        else
+            return ClothingItem.NO_RES;
+    }
+
+    public static Pair<Integer, Integer> getWaterResMMFork(@ClothingItem.Resistance int waterRes)
+    {
+        switch (waterRes)
+        {
+            case ClothingItem.HIGH_RES:
+                return new Pair<>(10, 40);
+            case ClothingItem.LIGHT_RES:
+                new Pair<>(2, 4);
+            case ClothingItem.MEDIUM_RES:
+                return new Pair<>(5, 9);
+            case ClothingItem.NO_RES:
+                return new Pair<>(0, 2);
+            case ClothingItem.VERY_HIGH_RES:
+                return new Pair<>(40, null);
+            default:
+                throw new UnsupportedOperationException("Unsupported resistance level => " + waterRes);
+        }
+    }
+
+    @ClothingItem.Resistance
+    public static int getOptimalWaterResForMM(int milimiterRainfall)
+    {
+        if(milimiterRainfall < 2)
+            return ClothingItem.NO_RES;
+        else if(milimiterRainfall < 4)
+            return ClothingItem.LIGHT_RES;
+        else if(milimiterRainfall < 9)
+            return ClothingItem.MEDIUM_RES;
+        else if(milimiterRainfall < 40)
+            return ClothingItem.HIGH_RES;
+        else
+            return ClothingItem.VERY_HIGH_RES;
+    }
+
+    public static Pair<Integer, Integer> getWindResSpeedFork(@ClothingItem.Resistance int windRes)
+    {
+        switch (windRes)
+        {
+            case ClothingItem.HIGH_RES:
+                return new Pair<>(39, 61);
+            case ClothingItem.LIGHT_RES:
+                return new Pair<>(6, 11);
+            case ClothingItem.MEDIUM_RES:
+                return new Pair<>(12, 28);
+            case ClothingItem.NO_RES:
+                return new Pair<>(0, 5);
+            case ClothingItem.VERY_HIGH_RES:
+                return new Pair<>(62, null);
+            default:
+                throw new UnsupportedOperationException("Unsupported resistance level => " + windRes);
+        }
+    }
+
+    @ClothingItem.Resistance
+    public static int getOptimalWindResForSpeed(int speed)
+    {
+        if(speed < 6)
+            return ClothingItem.NO_RES;
+        else if(speed < 12)
+            return ClothingItem.LIGHT_RES;
+        else if(speed < 39)
+            return ClothingItem.MEDIUM_RES;
+        else if(speed < 61)
+            return ClothingItem.HIGH_RES;
+        else
+            return ClothingItem.VERY_HIGH_RES;
+    }
+
 }

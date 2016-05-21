@@ -356,7 +356,7 @@ public class AddEditClothingFragment extends Fragment
             addConfirmFab.setImageDrawable(confirmVector);
 
             VectorDrawableCompat cancelVector
-                    = VectorDrawableCompat.create(getResources(), R.drawable.ic_clear_sky, getContext().getTheme());
+                    = VectorDrawableCompat.create(getResources(), R.drawable.ic_clear, getContext().getTheme());
             editCancelFab.setImageDrawable(cancelVector);
         }
         else

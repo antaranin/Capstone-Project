@@ -4,9 +4,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,18 +20,27 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import example.com.capstoneproject.R;
+import example.com.capstoneproject.data_layer.DataContract;
 import example.com.capstoneproject.data_layer.WeatherItem;
 import example.com.capstoneproject.data_layer.WeatherPreferenceModule;
+import example.com.capstoneproject.gui_layer.SuggestedApparelAdapter;
 import example.com.capstoneproject.management_layer.Utilities;
+import example.com.capstoneproject.management_layer.suggestion_processor.SuggestionProcessor;
 import example.com.capstoneproject.management_layer.web_services.WeatherSyncAdapter;
+import example.com.capstoneproject.model_layer.ClothingItem;
 import icepick.Icepick;
 import icepick.State;
 import lombok.NonNull;
 
+
+
 public class SuggestedApparelActivity extends AppCompatActivity
+        implements SuggestedApparelAdapter.OnItemLongClickedListener, SuggestionProcessor.OnSuggestionMadeListener
 {
     @BindView(R.id.current_weather_iv)
     ImageView weatherIv;
@@ -39,6 +54,31 @@ public class SuggestedApparelActivity extends AppCompatActivity
     @State
     WeatherItem currentWeather;
 
+    private SuggestionProcessor suggestionProcessor;
+    private SuggestedApparelAdapter adapter;
+    private ContentObserver observer = new ContentObserver(new Handler())
+    {
+        @Override
+        public boolean deliverSelfNotifications()
+        {
+            return false;
+        }
+
+        @Override
+        public void onChange(boolean selfChange)
+        {
+            super.onChange(selfChange);
+            extractClothingData();
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri)
+        {
+            super.onChange(selfChange, uri);
+            extractClothingData();
+        }
+    };
+
     private WeatherChangeReceiver receiver = new WeatherChangeReceiver();
 
     @Override
@@ -47,7 +87,17 @@ public class SuggestedApparelActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggested_apparel);
 
+        suggestionProcessor = new SuggestionProcessor();
+        suggestionProcessor.setListener(this);
+
         ButterKnife.bind(this);
+        adapter = new SuggestedApparelAdapter();
+        adapter.setListener(this);
+        RecyclerView recycler = ButterKnife.findById(this, R.id.recycler_view);
+        StaggeredGridLayoutManager sglm =
+                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        recycler.setLayoutManager(sglm);
+        recycler.setAdapter(adapter);
 
         Toolbar toolbar = ButterKnife.findById(this, R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -55,23 +105,36 @@ public class SuggestedApparelActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
+        getContentResolver().registerContentObserver(DataContract.ClothingEntry.CONTENT_URI, false, observer);
+
         if (savedInstanceState != null)
             restoreInstance(savedInstanceState);
         else
-            extractWeatherData();
+            createNewInstance();
     }
+
+    private void createNewInstance()
+    {
+        extractWeatherData();
+        extractClothingData();
+    }
+
+
 
     private void restoreInstance(Bundle savedInstanceState)
     {
         Icepick.restoreInstanceState(this, savedInstanceState);
         if (currentWeather != null)
             fillTopWithData(currentWeather);
+        suggestionProcessor.restoreInstanceState(savedInstanceState);
     }
 
     @Override
     protected void onResume()
     {
         super.onResume();
+        suggestionProcessor.setListener(this);
+        adapter.setData(suggestionProcessor.getSuggestedItems());
         IntentFilter filter = new IntentFilter(Utilities.WEATHER_ITEM_UPDATED_BROADCAST);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         extractWeatherData();
@@ -81,13 +144,22 @@ public class SuggestedApparelActivity extends AppCompatActivity
     protected void onPause()
     {
         super.onPause();
+        suggestionProcessor.setListener(null);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        getContentResolver().unregisterContentObserver(observer);
     }
 
     private void extractWeatherData()
     {
         WeatherPreferenceModule weatherPreference = new WeatherPreferenceModule(this);
         currentWeather = weatherPreference.extractWeatherItem();
+        suggestionProcessor.setWeatherData(currentWeather);
         if (currentWeather == null)
         {
             WeatherSyncAdapter.syncImmediately(this);
@@ -95,6 +167,12 @@ public class SuggestedApparelActivity extends AppCompatActivity
         }
 
         fillTopWithData(currentWeather);
+    }
+
+    private void extractClothingData()
+    {
+        Cursor cursor = getContentResolver().query(DataContract.ClothingEntry.CONTENT_URI, null, null, null, null);
+        suggestionProcessor.extractDataFromCursor(cursor);
     }
 
     private void fillTopWithData(@NonNull WeatherItem weatherItem)
@@ -133,6 +211,18 @@ public class SuggestedApparelActivity extends AppCompatActivity
         startActivity(i);
     }
 
+    @Override
+    public void onItemLongClicked(ClothingItem item)
+    {
+        //TODO
+    }
+
+    @Override
+    public void onSuggestionMade(ArrayList<ClothingItem> suggestedItems)
+    {
+        adapter.setData(suggestedItems);
+    }
+
     private class WeatherChangeReceiver extends BroadcastReceiver
     {
 
@@ -140,7 +230,7 @@ public class SuggestedApparelActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent)
         {
             String action = intent.getAction();
-            if(!Utilities.equals(action, Utilities.WEATHER_ITEM_UPDATED_BROADCAST))
+            if (!Utilities.equals(action, Utilities.WEATHER_ITEM_UPDATED_BROADCAST))
                 return;
 
             extractWeatherData();

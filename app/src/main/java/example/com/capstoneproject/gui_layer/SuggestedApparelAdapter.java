@@ -1,5 +1,7 @@
 package example.com.capstoneproject.gui_layer;
 
+import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,17 +9,31 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import example.com.capstoneproject.R;
-import example.com.capstoneproject.data_layer.ClothingCursor;
+import example.com.capstoneproject.model_layer.ClothingItem;
+import lombok.Setter;
 
 /**
  * Created by Arin on 14/05/16.
  */
 public class SuggestedApparelAdapter extends RecyclerView.Adapter<SuggestedApparelAdapter.ApparelViewHolder>
 {
-    private ClothingCursor cursor;
+    private ArrayList<ClothingItem> data;
+
+    @Setter
+    private OnItemLongClickedListener listener;
+
+    public void setData(@Nullable  ArrayList<ClothingItem> data)
+    {
+        this.data = data;
+        notifyDataSetChanged();
+    }
 
     @Override
     public ApparelViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
@@ -33,16 +49,21 @@ public class SuggestedApparelAdapter extends RecyclerView.Adapter<SuggestedAppar
     @Override
     public void onBindViewHolder(ApparelViewHolder holder, int position)
     {
-        //TODO
+        ClothingItem dataItem = data.get(position);
+        holder.nameView.setText(dataItem.getName());
+        Context context = holder.photoView.getContext();
+        Picasso.with(context)
+                .load(dataItem.getImageUri())
+                .into(holder.photoView);
 
     }
 
     @Override
     public int getItemCount()
     {
-        if(cursor == null)
+        if(data == null)
             return 0;
-        return cursor.getCount();
+        return data.size();
     }
 
     public class ApparelViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener
@@ -63,8 +84,14 @@ public class SuggestedApparelAdapter extends RecyclerView.Adapter<SuggestedAppar
         @Override
         public boolean onLongClick(View v)
         {
-            //TODO
-            return false;
+            if(listener != null)
+                listener.onItemLongClicked(data.get(getAdapterPosition()));
+            return true;
         }
+    }
+
+    public interface OnItemLongClickedListener
+    {
+        void onItemLongClicked(ClothingItem item);
     }
 }

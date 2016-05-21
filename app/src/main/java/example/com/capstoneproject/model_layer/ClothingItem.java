@@ -21,7 +21,7 @@ public class ClothingItem implements Parcelable
     public final static long NO_ID = -1L;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({T_SHIRT, SHIRT, TROUSERS, JACKET, SHOES, HAT})
+    @IntDef({T_SHIRT, SHIRT, TROUSERS, JACKET, BLOUSE, SKIRT})
     public @interface ClothingType { }
 
     @Retention(RetentionPolicy.SOURCE)
@@ -38,8 +38,8 @@ public class ClothingItem implements Parcelable
     public final static int SHIRT = 1;
     public final static int TROUSERS = 2;
     public final static int JACKET = 3;
-    public final static int SHOES = 4;
-    public final static int HAT = 5;
+    public final static int BLOUSE = 4;
+    public final static int SKIRT = 5;
 
     private long id = NO_ID;
     private String name;
@@ -75,7 +75,8 @@ public class ClothingItem implements Parcelable
     {
         id = in.readLong();
         name = in.readString();
-        imageUri = Uri.parse(in.readString());
+        String uriString= in.readString();
+        imageUri = uriString == null ? null : Uri.parse(uriString);
         waterResistance = in.readInt();
         windResistance = in.readInt();
         coldResistance = in.readInt();
@@ -108,7 +109,7 @@ public class ClothingItem implements Parcelable
     {
         dest.writeLong(id);
         dest.writeString(name);
-        dest.writeString(imageUri.toString());
+        dest.writeString(imageUri == null ? null : imageUri.toString());
         dest.writeInt(waterResistance);
         dest.writeInt(windResistance);
         dest.writeInt(coldResistance);
