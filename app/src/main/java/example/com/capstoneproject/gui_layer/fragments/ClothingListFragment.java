@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -24,7 +25,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Optional;
 import example.com.capstoneproject.R;
-import example.com.capstoneproject.Utilities;
+import example.com.capstoneproject.management_layer.Utilities;
 import example.com.capstoneproject.data_layer.DataContract;
 import example.com.capstoneproject.gui_layer.ClothingAdapter;
 import example.com.capstoneproject.gui_layer.FillableView;
@@ -140,7 +141,7 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
     {
         log("Data count => " + data.getCount());
         clothingAdapter.setData(data);
-/*        if (data.getCount() == 0)
+        if (data.getCount() == 0)
             return;
 
         recycler.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
@@ -151,12 +152,12 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
                 if (recycler.getChildCount() > 0)
                 {
                     recycler.getViewTreeObserver().removeOnPreDrawListener(this);
-                    clothingAdapter.resetSelection();
+                    clothingAdapter.selectItem(0, true);
                     return true;
                 }
                 return false;
             }
-        });*/
+        });
     }
 
     @Override

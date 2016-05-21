@@ -18,7 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import example.com.capstoneproject.R;
-import example.com.capstoneproject.Utilities;
+import example.com.capstoneproject.management_layer.Utilities;
 import example.com.capstoneproject.gui_layer.FillableView;
 import example.com.capstoneproject.model_layer.ClothingItem;
 import hugo.weaving.DebugLog;

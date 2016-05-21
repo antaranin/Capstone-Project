@@ -1,4 +1,4 @@
-package example.com.capstoneproject;
+package example.com.capstoneproject.gui_layer;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;

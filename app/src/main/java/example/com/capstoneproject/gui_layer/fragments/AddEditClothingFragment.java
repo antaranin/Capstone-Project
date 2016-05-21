@@ -34,7 +34,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import example.com.capstoneproject.R;
-import example.com.capstoneproject.Utilities;
+import example.com.capstoneproject.management_layer.Utilities;
 import example.com.capstoneproject.data_layer.DataContract;
 import example.com.capstoneproject.data_layer.DataUtils;
 import example.com.capstoneproject.gui_layer.FillableView;
@@ -144,7 +144,7 @@ public class AddEditClothingFragment extends Fragment
     public void onResume()
     {
         super.onResume();
-        //This needs to be moved here from onViewsCreated because EditText is having problems with changing text at that point…
+        //This was moved here from onViewsCreated because EditText is having problems with changing text at that point…
         ClothingItem displayedItem = draftItem == null ? currentItem : draftItem;
         changeDisplayedName(displayedItem.getName());
         nameEt.addTextChangedListener(textWatcher);
@@ -287,9 +287,7 @@ public class AddEditClothingFragment extends Fragment
     @DebugLog
     private void changeDisplayedName(String name)
     {
-        textWatcher.automaticNameChange = true;
         nameEt.setText(name != null ? name : "");
-        nameEt.invalidate();
     }
 
     private void trySavingChanges()
@@ -358,7 +356,7 @@ public class AddEditClothingFragment extends Fragment
             addConfirmFab.setImageDrawable(confirmVector);
 
             VectorDrawableCompat cancelVector
-                    = VectorDrawableCompat.create(getResources(), R.drawable.ic_clear, getContext().getTheme());
+                    = VectorDrawableCompat.create(getResources(), R.drawable.ic_clear_sky, getContext().getTheme());
             editCancelFab.setImageDrawable(cancelVector);
         }
         else
@@ -546,7 +544,6 @@ public class AddEditClothingFragment extends Fragment
 
     private class NameChangeWatcher implements TextWatcher
     {
-        private boolean automaticNameChange = false;
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after)
         {
@@ -557,11 +554,6 @@ public class AddEditClothingFragment extends Fragment
         @DebugLog
         public void onTextChanged(CharSequence s, int start, int before, int count)
         {
-            if (automaticNameChange)
-            {
-                automaticNameChange = false;
-                return;
-            }
             if (draftItem != null)
             {
                 draftItem.setName(s.toString());

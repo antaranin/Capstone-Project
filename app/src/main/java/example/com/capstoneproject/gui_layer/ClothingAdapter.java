@@ -18,8 +18,7 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import example.com.capstoneproject.R;
-import example.com.capstoneproject.SingleSelectionAdapter;
-import example.com.capstoneproject.Utilities;
+import example.com.capstoneproject.management_layer.Utilities;
 import example.com.capstoneproject.data_layer.ClothingCursor;
 import example.com.capstoneproject.model_layer.ClothingItem;
 import hugo.weaving.DebugLog;
@@ -80,12 +79,7 @@ public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.Clot
         resetSelection();
     }
 
-    public void selectItem(int position)
-    {
-        selectItem(position, false);
-    }
-
-    private void selectItem(int position, boolean userCalled)
+    public void selectItem(int position, boolean userCalled)
     {
         if (cursor.getCount() <= position)
             throw new AssertionError("The position provided is outside of data range");

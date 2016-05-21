@@ -1,8 +1,10 @@
-package example.com.capstoneproject;
+package example.com.capstoneproject.management_layer;
 
 import android.content.Context;
 import android.support.annotation.DrawableRes;
 
+import example.com.capstoneproject.R;
+import example.com.capstoneproject.data_layer.WeatherItem;
 import example.com.capstoneproject.model_layer.ClothingItem;
 
 /**
@@ -10,6 +12,8 @@ import example.com.capstoneproject.model_layer.ClothingItem;
  */
 public class Utilities
 {
+    public static final String WEATHER_ITEM_UPDATED_BROADCAST = "weather_item_updated_broadcast";
+
     public static String getWaterResistanceDesc(Context context, @ClothingItem.Resistance int resistance)
     {
         switch (resistance)
@@ -110,5 +114,72 @@ public class Utilities
             default:
                 throw new UnsupportedOperationException("Unsupported type => " + type);
         }
+    }
+
+    @DrawableRes
+    public static int getWeatherIconDrawableRes(@WeatherItem.WeatherType int weatherType)
+    {
+        switch (weatherType)
+        {
+            case WeatherItem.CLEAR_SKY:
+                return R.drawable.ic_clear_sky;
+            case WeatherItem.CLOUDS:
+                return R.drawable.ic_cloudy;
+            case WeatherItem.FOG:
+                return R.drawable.ic_fog;
+            case WeatherItem.LIGHT_CLOUDS:
+                return R.drawable.ic_light_clouds;
+            case WeatherItem.LIGHT_RAIN:
+                return R.drawable.ic_light_rain;
+            case WeatherItem.RAIN:
+                return R.drawable.ic_rain;
+            case WeatherItem.SNOW:
+                return R.drawable.ic_snow;
+            case WeatherItem.STORM:
+                return R.drawable.ic_storm;
+            default:
+                throw new AssertionError("Unexpected value => " + weatherType);
+        }
+    }
+
+    public static String formatWindSpeed(Context context, float speed, boolean isMetric)
+    {
+        int windFormat;
+        if (isMetric)
+        {
+            windFormat = R.string.format_wind_kmh;
+        }
+        else
+        {
+            windFormat = R.string.format_wind_mph;
+            speed = 0.621371192237334f * speed;
+        }
+        return context.getString(windFormat, speed);
+    }
+
+    public static String formatTemperature(Context context, double temperature, boolean isMetric)
+    {
+        // Data stored in Celsius by default.  If user prefers to see in Fahrenheit, convert
+        // the values here.
+        if (!isMetric)
+            temperature = (temperature * 1.8) + 32;
+
+        return String.format(context.getString(R.string.format_temperature), temperature);
+    }
+
+    @SuppressWarnings("SimplifiableIfStatement")
+    public static boolean equals(Object object1, Object object2)
+    {
+        //It's more readable in multiple lines and overhead is minimal
+        if(object1 == object2)
+            return true;
+
+        if(object1 == null || object2 == null)
+            return false;
+
+        if(object1.getClass() != object2.getClass())
+            return false;
+
+        return object1.equals(object2);
     }
 }

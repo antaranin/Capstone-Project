@@ -34,7 +34,6 @@ public class ClothingActivity extends AppCompatActivity implements
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.fragment_holder_layout_ca, listFragment)
-                .addToBackStack(listFragment.getClass().getSimpleName())
                 .commit();
         listFragment.setListener(this);
     }
