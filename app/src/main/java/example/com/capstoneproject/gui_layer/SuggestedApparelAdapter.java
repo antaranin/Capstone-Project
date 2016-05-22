@@ -52,6 +52,7 @@ public class SuggestedApparelAdapter extends RecyclerView.Adapter<SuggestedAppar
         ClothingItem dataItem = data.get(position);
         holder.nameView.setText(dataItem.getName());
         Context context = holder.photoView.getContext();
+        holder.itemView.setContentDescription(dataItem.getName());
         Picasso.with(context)
                 .load(dataItem.getImageUri())
                 .into(holder.photoView);

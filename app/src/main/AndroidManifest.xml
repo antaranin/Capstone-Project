@@ -37,13 +37,6 @@
             android:syncable="true"
             />
 
-        <activity
-            android:name=".gui_layer.activities.PermisionActivity"
-            android:label="@string/title_activity_permision"
-            android:theme="@style/DialogAppTheme"
-            >
-        </activity>
-
         <service
             android:name=".management_layer.SyncService"
             android:enabled="true"

@@ -68,6 +68,8 @@ public class ItemTypeFragment extends Fragment
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
+        int textMargins = getResources().getDimensionPixelSize(R.dimen.large_margin_padding);
+        int imageTopMargin = getResources().getDimensionPixelSize(R.dimen.medium_margin_padding);
         for (int i = 0; i < types.length; i++)
         {
             @ClothingItem.ClothingType
@@ -75,11 +77,13 @@ public class ItemTypeFragment extends Fragment
 
             RelativeLayout rl = new RelativeLayout(getContext());
             rl.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT));
+            final String clothingDesc = Utilities.getClothingDesc(getContext(), type);
             ImageView iv = new ImageView(getContext());
             iv.setImageResource(Utilities.getClothingTypeDrawableRes(type));
+            iv.setContentDescription(clothingDesc);
             iv.setId(i);
             TextView tv = new TextView(getContext());
-            tv.setText(Utilities.getClothingDesc(getContext(), type));
+            tv.setText(clothingDesc);
             tv.setGravity(Gravity.CENTER);
             tv.setId(i + types.length);
             rl.addView(iv);
@@ -88,11 +92,13 @@ public class ItemTypeFragment extends Fragment
             RelativeLayout.LayoutParams ivLayParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
             ivLayParams.addRule(RelativeLayout.ABOVE, i + types.length);
             ivLayParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+            ivLayParams.topMargin = imageTopMargin;
             iv.setLayoutParams(ivLayParams);
 
             RelativeLayout.LayoutParams tvLayParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             tvLayParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            tvLayParams.setMargins(textMargins, textMargins, textMargins, textMargins);
             tv.setLayoutParams(tvLayParams);
             imageFlipper.addView(rl);
         }
@@ -168,6 +174,8 @@ public class ItemTypeFragment extends Fragment
     {
         currentTypePos ++;
         currentTypePos %= types.length;
+        imageFlipper.setInAnimation(getActivity(), R.anim.left_in);
+        imageFlipper.setOutAnimation(getActivity(), R.anim.right_out);
         imageFlipper.showNext();
     }
 
@@ -175,6 +183,8 @@ public class ItemTypeFragment extends Fragment
     {
         currentTypePos += types.length - 1; //We remove one and then add a whole length to keep modulo positive
         currentTypePos %= types.length;
+        imageFlipper.setInAnimation(getActivity(), R.anim.right_in);
+        imageFlipper.setOutAnimation(getActivity(), R.anim.left_out);
         imageFlipper.showPrevious();
     }
 

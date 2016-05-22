@@ -1,5 +1,6 @@
 package example.com.capstoneproject.gui_layer.activities;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +10,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -42,6 +45,7 @@ import lombok.NonNull;
 public class SuggestedApparelActivity extends AppCompatActivity
         implements SuggestedApparelAdapter.OnItemLongClickedListener, SuggestionProcessor.OnSuggestionMadeListener
 {
+    private static final int REQUEST_LOCATION_PERMISSIONS = 42;
     @BindView(R.id.current_weather_iv)
     ImageView weatherIv;
 
@@ -111,7 +115,40 @@ public class SuggestedApparelActivity extends AppCompatActivity
             restoreInstance(savedInstanceState);
         else
             createNewInstance();
+
+        requestPermissionsIfNeeded(getIntent().getAction());
+
     }
+
+    private void requestPermissionsIfNeeded(String action)
+    {
+        if(!Utilities.REQUEST_PERMISSION_ACTION.equals(action))
+            return;
+
+        if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION))
+        {
+            //TODO
+            new AlertDialog.Builder(this)
+                    .setPositiveButton(getString(R.string.ok), (dialog, which) -> requestLocationPermissions())
+                    .setTitle(getString(R.string.loc_perm_title))
+                    .setMessage(getString(R.string.loc_perm_message))
+                    .create()
+                    .show();
+        }
+        else
+        {
+            requestLocationPermissions();
+        }
+    }
+
+    private void requestLocationPermissions()
+    {
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                REQUEST_LOCATION_PERMISSIONS);
+    }
+
 
     private void createNewInstance()
     {
@@ -136,6 +173,7 @@ public class SuggestedApparelActivity extends AppCompatActivity
         suggestionProcessor.setListener(this);
         adapter.setData(suggestionProcessor.getSuggestedItems());
         IntentFilter filter = new IntentFilter(Utilities.WEATHER_ITEM_UPDATED_BROADCAST);
+        filter.addAction(Utilities.REQUEST_PERMISSION_ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         extractWeatherData();
     }
@@ -183,6 +221,7 @@ public class SuggestedApparelActivity extends AppCompatActivity
         windTv.setText(Utilities.formatWindSpeed(this, weatherItem.getWindSpeed(), true));
         temperatureTv.setText(Utilities.formatTemperature(this, weatherItem.getTemperature(), true));
         weatherIv.setImageResource(Utilities.getWeatherIconDrawableRes(weatherItem.getWeatherType()));
+        weatherIv.setContentDescription(Utilities.getWeatherDescription(weatherItem.getWeatherType(), this));
     }
 
     @Override
@@ -233,10 +272,10 @@ public class SuggestedApparelActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent)
         {
             String action = intent.getAction();
-            if (!Utilities.equals(action, Utilities.WEATHER_ITEM_UPDATED_BROADCAST))
-                return;
+            requestPermissionsIfNeeded(action);
 
-            extractWeatherData();
+            if (Utilities.equals(action, Utilities.WEATHER_ITEM_UPDATED_BROADCAST))
+                extractWeatherData();
         }
     }
 }

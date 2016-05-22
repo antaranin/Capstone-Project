@@ -32,7 +32,7 @@ import com.google.android.gms.location.LocationServices;
 import java.util.concurrent.TimeUnit;
 
 import example.com.capstoneproject.R;
-import example.com.capstoneproject.gui_layer.activities.PermisionActivity;
+import example.com.capstoneproject.gui_layer.activities.ClothingActivity;
 import example.com.capstoneproject.management_layer.Utilities;
 import hugo.weaving.DebugLog;
 
@@ -138,6 +138,7 @@ public class WeatherSyncAdapter extends AbstractThreadedSyncAdapter
                 && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED)
         {
+            LocalBroadcastManager.getInstance(getContext()).sendBroadcast(new Intent(Utilities.REQUEST_PERMISSION_ACTION));
             showPermissionRequiredNotification();
             return;
         }
@@ -190,7 +191,8 @@ public class WeatherSyncAdapter extends AbstractThreadedSyncAdapter
                         .setContentTitle("Location permission required")
                         .setContentText("Location permission is required to download weather data.");
 
-        Intent resultIntent = new Intent(getContext(), PermisionActivity.class);
+        Intent resultIntent = new Intent(getContext(), ClothingActivity.class);
+        resultIntent.setAction(Utilities.REQUEST_PERMISSION_ACTION);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(getContext());
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(

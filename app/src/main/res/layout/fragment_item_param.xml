@@ -26,7 +26,7 @@
 
     <TextView
         android:id="@+id/param_description_tv"
-        android:layout_margin="20dp"
+        android:layout_margin="@dimen/large_margin_padding"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_alignParentBottom="true"
@@ -38,9 +38,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_clear"
+        android:contentDescription="@string/cancel"
         android:layout_above="@+id/confirm_fab"
         android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/medium_margin_padding"
+        android:layout_marginBottom="28dp"
+        android:layout_marginEnd="@dimen/medium_margin_padding"
         />
 
     <android.support.design.widget.FloatingActionButton
@@ -48,8 +50,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_confirm"
+        android:contentDescription="@string/confirm"
         android:layout_below="@+id/fillableView"
-        android:layout_margin="@dimen/medium_margin_padding"
+        android:layout_marginTop="-12dp"
+        android:layout_marginEnd="@dimen/medium_margin_padding"
         android:layout_alignParentEnd="true"
         />
 

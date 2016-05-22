@@ -146,6 +146,7 @@ public class ItemResParamFragment extends Fragment
     {
         this.resistance = resistance;
         paramDescTv.setText(getParamTypeResText(currentParamType, resistance));
+        fillableView.setContentDescription(getParamTypeResContentDesc(currentParamType, resistance));
     }
 
     private String getParamTypeResText(@ParamType  int paramType, @ClothingItem.Resistance int resistance)
@@ -158,6 +159,21 @@ public class ItemResParamFragment extends Fragment
                 return Utilities.getColdResistanceDesc(getContext(), resistance);
             case WATER_RES:
                 return Utilities.getWaterResistanceDesc(getContext(), resistance);
+            default:
+                throw new RuntimeException("Unsupported param type => " + paramType);
+        }
+    }
+
+    private String getParamTypeResContentDesc(@ParamType int paramType, @ClothingItem.Resistance int resistance)
+    {
+        switch (paramType)
+        {
+            case WIND_RES:
+                return Utilities.getWindResistanceContentDesc(getContext(), resistance);
+            case COLD_RES:
+                return Utilities.getColdResistanceContentDesc(getContext(), resistance);
+            case WATER_RES:
+                return Utilities.getWaterResistanceContentDesc(getContext(), resistance);
             default:
                 throw new RuntimeException("Unsupported param type => " + paramType);
         }

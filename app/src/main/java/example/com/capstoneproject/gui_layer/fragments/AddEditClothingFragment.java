@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.soundcloud.android.crop.Crop;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,10 +36,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
 import example.com.capstoneproject.R;
-import example.com.capstoneproject.management_layer.Utilities;
 import example.com.capstoneproject.data_layer.DataContract;
 import example.com.capstoneproject.data_layer.DataUtils;
 import example.com.capstoneproject.gui_layer.FillableView;
+import example.com.capstoneproject.management_layer.Utilities;
 import example.com.capstoneproject.model_layer.ClothingItem;
 import hugo.weaving.DebugLog;
 import icepick.Icepick;
@@ -89,6 +91,7 @@ public class AddEditClothingFragment extends Fragment
     private OnAddEditClothingInteractionListener listener;
 
     private NameChangeWatcher textWatcher;
+    private boolean isTablet;
 
 
     public AddEditClothingFragment()
@@ -120,6 +123,7 @@ public class AddEditClothingFragment extends Fragment
         ClothingItem preSetCurrentItem = currentItem;
         ClothingItem preSetDraftItem = draftItem;
         textWatcher = new NameChangeWatcher();
+        isTablet = getContext().getResources().getBoolean(R.bool.is_tablet);
         if (savedInstanceState != null)
             Icepick.restoreInstanceState(this, savedInstanceState);
 
@@ -148,6 +152,23 @@ public class AddEditClothingFragment extends Fragment
         ClothingItem displayedItem = draftItem == null ? currentItem : draftItem;
         changeDisplayedName(displayedItem.getName());
         nameEt.addTextChangedListener(textWatcher);
+        setCurrentTitle();
+    }
+
+    private void setCurrentTitle()
+    {
+        if(isTablet)
+            return;
+        String title;
+        if(isAdding())
+            title = getContext().getString(R.string.add_item);
+        else if(isEditing())
+            title = getContext().getString(R.string.edit_item);
+        else
+            title = getContext().getString(R.string.view_item);
+        //noinspection ConstantConditions
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(title);
+
     }
 
     @Override
@@ -163,7 +184,7 @@ public class AddEditClothingFragment extends Fragment
         if (isEditing() || isAdding())
             trySavingChanges();
         else
-            startCreatingNewItem();
+            startAddingNewItem();
     }
 
     @OnLongClick(R.id.item_photo_iv)
@@ -256,13 +277,14 @@ public class AddEditClothingFragment extends Fragment
         }
     }*/
 
-    private void startCreatingNewItem()
+    private void startAddingNewItem()
     {
         currentItem = null;
         draftItem = new ClothingItem();
         resetViews();
         setFabsToAddEditMode(true);
         setEnableInput(true);
+        setCurrentTitle();
     }
 
     private void resetViews()
@@ -272,16 +294,22 @@ public class AddEditClothingFragment extends Fragment
             throw new AssertionError("Either draft item or current item cannot be null");
 
         waterResView.setCurrentFill(displayedItem.getWaterResistance());
+        waterResView.setContentDescription(Utilities.getWaterResistanceContentDesc(getContext(), displayedItem.getWaterResistance()));
         windResView.setCurrentFill(displayedItem.getWindResistance());
+        windResView.setContentDescription(Utilities.getWindResistanceContentDesc(getContext(), displayedItem.getWindResistance()));
         coldResView.setCurrentFill(displayedItem.getColdResistance());
+        coldResView.setContentDescription(Utilities.getColdResistanceContentDesc(getContext(), displayedItem.getColdResistance()));
         clothingTypeIv.setImageResource(Utilities.getClothingTypeDrawableRes(displayedItem.getType()));
+        clothingTypeIv.setContentDescription(Utilities.getClothingDesc(getContext(), displayedItem.getType()));
         File imageFile = extractFileIfExists(getContext(), displayedItem.getId());
-        Uri imageUri = imageFile == null ? null : Uri.fromFile(imageFile);
-        itemPhotoIv.setImageURI(imageUri);
-        if (imageUri == null)
+        if (imageFile == null)
             noPhotoTv.setVisibility(View.VISIBLE);
         else
             noPhotoTv.setVisibility(View.GONE);
+        itemPhotoIv.setContentDescription(displayedItem.getName());
+        Picasso.with(getContext())
+                .load(imageFile)
+                .into(itemPhotoIv);
         processConfirmationBtnColor();
         changeDisplayedName(displayedItem.getName());
     }
@@ -356,20 +384,24 @@ public class AddEditClothingFragment extends Fragment
             VectorDrawableCompat confirmVector
                     = VectorDrawableCompat.create(getResources(), R.drawable.ic_confirm, getContext().getTheme());
             addConfirmFab.setImageDrawable(confirmVector);
+            addConfirmFab.setContentDescription(getString(R.string.confirm));
 
             VectorDrawableCompat cancelVector
                     = VectorDrawableCompat.create(getResources(), R.drawable.ic_clear, getContext().getTheme());
             editCancelFab.setImageDrawable(cancelVector);
+            editCancelFab.setContentDescription(getString(R.string.cancel));
         }
         else
         {
             VectorDrawableCompat confirmVector
                     = VectorDrawableCompat.create(getResources(), R.drawable.ic_add, getContext().getTheme());
             addConfirmFab.setImageDrawable(confirmVector);
+            addConfirmFab.setContentDescription(getString(R.string.add_item));
 
             VectorDrawableCompat cancelVector
                     = VectorDrawableCompat.create(getResources(), R.drawable.ic_edit, getContext().getTheme());
             editCancelFab.setImageDrawable(cancelVector);
+            editCancelFab.setContentDescription(getString(R.string.edit_item));
         }
     }
 
@@ -385,7 +417,7 @@ public class AddEditClothingFragment extends Fragment
             theme.resolveAttribute(R.attr.colorAccent, typedValue, true);
             int color = typedValue.data;
             addConfirmFab.setBackgroundColor(color);
-
+            setCurrentTitle();
         }
         else
         {
@@ -416,6 +448,7 @@ public class AddEditClothingFragment extends Fragment
         draftItem = currentItem.copy();
         setFabsToAddEditMode(true);
         setEnableInput(true);
+        setCurrentTitle();
     }
 
     private void cancelChanges()
@@ -437,6 +470,7 @@ public class AddEditClothingFragment extends Fragment
         resetViews();
         setFabsToAddEditMode(false);
         setEnableInput(false);
+        setCurrentTitle();
     }
 
     private void setEnableInput(boolean enableInput)

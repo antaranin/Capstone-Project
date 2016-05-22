@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -68,6 +69,8 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
     @Setter
     private OnListInteractionListener listener;
 
+    private boolean isTablet;
+
     public ClothingListFragment()
     {
         // Required empty public constructor
@@ -85,11 +88,22 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
+        isTablet = getResources().getBoolean(R.bool.is_tablet);
         ButterKnife.bind(this, view);
         clothingAdapter = new ClothingAdapter();
         clothingAdapter.setListener(this);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         recycler.setAdapter(clothingAdapter);
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        if(isTablet)
+            return;
+        //noinspection ConstantConditions
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.item_list);
     }
 
     @Optional
@@ -207,11 +221,24 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
         if(previewLayout.getVisibility() == View.GONE)
             previewLayout.setVisibility(View.VISIBLE);
 
-        coldResFv.setCurrentFill(item.getColdResistance());
-        waterResFv.setCurrentFill(item.getWaterResistance());
-        windResFv.setCurrentFill(item.getWindResistance());
-        clothingTypeIv.setImageResource(Utilities.getClothingTypeDrawableRes(item.getType()));
-        log("Loaded uir => " + item.getImageUri());
+        final int coldResistance = item.getColdResistance();
+        coldResFv.setCurrentFill(coldResistance);
+        coldResFv.setContentDescription(Utilities.getColdResistanceContentDesc(getContext(), coldResistance));
+
+        final int waterResistance = item.getWaterResistance();
+        waterResFv.setCurrentFill(waterResistance);
+        waterResFv.setContentDescription(Utilities.getWaterResistanceContentDesc(getContext(), waterResistance));
+
+        final int windResistance = item.getWindResistance();
+        windResFv.setCurrentFill(windResistance);
+        windResFv.setContentDescription(Utilities.getWindResistanceContentDesc(getContext(), windResistance));
+
+        final int type = item.getType();
+        clothingTypeIv.setImageResource(Utilities.getClothingTypeDrawableRes(type));
+        clothingTypeIv.setContentDescription(Utilities.getClothingDesc(getContext(), type));
+
+        log("Loaded uri => " + item.getImageUri());
+        photoPreviewIv.setContentDescription(item.getName());
         Picasso.with(getContext())
                 .load(item.getImageUri().toString())
                 .resize(photoPreviewIv.getWidth(), photoPreviewIv.getHeight())

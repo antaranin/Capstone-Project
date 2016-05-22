@@ -36,6 +36,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_add"
         android:layout_below="@+id/item_preview_layout"
+        android:contentDescription="@string/add_item"
         android:layout_marginTop="-8dp"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/medium_margin_padding"

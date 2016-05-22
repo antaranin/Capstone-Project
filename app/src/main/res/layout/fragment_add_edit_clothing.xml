@@ -1,8 +1,9 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".gui_layer.fragments.AddEditClothingFragment"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".gui_layer.fragments.AddEditClothingFragment"
     >
 
     <ImageView
@@ -12,13 +13,14 @@
         android:layout_alignParentTop="true"
         android:layout_above="@+id/item_param_ll"
         android:background="?attr/colorPrimary"
+        android:contentDescription="@string/photo_holder"
 
         />
 
     <TextView
         android:id="@+id/no_photo_tv"
         style="@style/very_large_tv_style"
-        android:text="Long press to add or change photo."
+        android:text="@string/long_press_to_add_or_change_photo"
         android:textColor="@color/alterante_text"
         android:layout_alignBottom="@+id/item_photo_iv"
         android:layout_alignTop="@+id/item_photo_iv"
@@ -27,13 +29,13 @@
         android:gravity="center"
         />
 
-        <include
-            android:id="@+id/item_param_ll"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/item_param_layout_height"
-            android:layout_above="@+id/item_name_et"
-            layout="@layout/item_param_btn_ll"
-            />
+    <include
+        android:id="@+id/item_param_ll"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_param_layout_height"
+        android:layout_above="@+id/item_name_et"
+        layout="@layout/item_param_btn_ll"
+        />
 
 
     <EditText
@@ -47,6 +49,7 @@
         android:paddingLeft="@dimen/medium_margin_padding"
         android:paddingRight="@dimen/medium_margin_padding"
         android:hint="@string/enter_clothing_name"
+        android:textAlignment="viewStart"
         />
 
     <android.support.design.widget.FloatingActionButton

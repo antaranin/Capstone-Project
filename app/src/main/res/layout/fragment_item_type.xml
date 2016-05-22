@@ -8,9 +8,9 @@
     <!-- TODO: Update blank fragment layout -->
     <TextView
         android:id="@+id/swipe_left_right_tv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/large_tv_style"
         android:text="@string/swipe_left_or_right_to_change"
+        android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
         android:layout_margin="@dimen/medium_margin_padding"
         />
@@ -31,6 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_clear"
+        android:contentDescription="@string/cancel"
         android:layout_above="@+id/confirm_fab"
         android:layout_alignParentEnd="true"
         android:layout_margin="@dimen/medium_margin_padding"
@@ -42,6 +43,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_confirm"
         android:layout_alignParentBottom="true"
+        android:contentDescription="@string/confirm"
         android:layout_marginBottom="60dp"
         android:layout_marginTop="@dimen/medium_margin_padding"
         android:layout_marginEnd="@dimen/medium_margin_padding"

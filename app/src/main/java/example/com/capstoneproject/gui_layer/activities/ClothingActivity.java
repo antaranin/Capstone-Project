@@ -19,16 +19,21 @@ public class ClothingActivity extends AppCompatActivity implements
     private ItemResParamFragment itemResParamFragment;
     private ItemTypeFragment itemTypeFragment;
 
+    private boolean isTablet;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clothing);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setTitle("Item list");
+
+        isTablet = getResources().getBoolean(R.bool.is_tablet);
+        if(isTablet)
+            getSupportActionBar().setTitle(getString(R.string.manage_clothing));
 
         listFragment = new ClothingListFragment();
         getSupportFragmentManager()

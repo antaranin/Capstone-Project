@@ -15,6 +15,7 @@ public class Utilities
 {
     public static final String WEATHER_ITEM_UPDATED_BROADCAST = "example.com.capstoneproject.WEATHER_ITEM_UPDATED";
     public static final String CLOTHING_ITEMS_CHANGED_BROADCAST = "example.com.capstoneproject.CLOTHING_ITEMS_CHANGED";
+    public static final String REQUEST_PERMISSION_ACTION = "example.com.capstoneproject.REQUEST_PERMISSION";
 
     public static String getWaterResistanceDesc(Context context, @ClothingItem.Resistance int resistance)
     {
@@ -35,6 +36,25 @@ public class Utilities
         }
     }
 
+    public static String getWaterResistanceContentDesc(Context context, @ClothingItem.Resistance int resistance)
+    {
+        switch (resistance)
+        {
+            case ClothingItem.HIGH_RES:
+                return context.getString(R.string.high_water_res_cd);
+            case ClothingItem.LIGHT_RES:
+                return context.getString(R.string.light_water_res_cd);
+            case ClothingItem.MEDIUM_RES:
+                return context.getString(R.string.medium_water_res_cd);
+            case ClothingItem.NO_RES:
+                return context.getString(R.string.no_water_res_cd);
+            case ClothingItem.VERY_HIGH_RES:
+                return context.getString(R.string.very_high_water_res_cd);
+            default:
+                throw new UnsupportedOperationException("Unsupported resistance level => " + resistance);
+        }
+    }
+
 
     public static String getWindResistanceDesc(Context context, @ClothingItem.Resistance int resistance)
     {
@@ -51,26 +71,65 @@ public class Utilities
             case ClothingItem.VERY_HIGH_RES:
                 return context.getString(R.string.very_high_wind_res);
             default:
-                throw new AssertionError("Unsupported resistance level");
+                throw new UnsupportedOperationException("Unsupported resistance level => " + resistance);
+        }
+    }
+
+    public static String getWindResistanceContentDesc(Context context, @ClothingItem.Resistance int resistance)
+    {
+        switch (resistance)
+        {
+            case ClothingItem.HIGH_RES:
+                return context.getString(R.string.high_wind_res_cd);
+            case ClothingItem.LIGHT_RES:
+                return context.getString(R.string.light_wind_res_cd);
+            case ClothingItem.MEDIUM_RES:
+                return context.getString(R.string.medium_wind_res_cd);
+            case ClothingItem.NO_RES:
+                return context.getString(R.string.no_wind_res_cd);
+            case ClothingItem.VERY_HIGH_RES:
+                return context.getString(R.string.very_high_wind_res_cd);
+            default:
+                throw new UnsupportedOperationException("Unsupported resistance level => " + resistance);
         }
     }
 
     public static String getColdResistanceDesc(Context context, @ClothingItem.Resistance int resistance)
     {
+        Pair<Integer, Integer> resFork = getColdResTemperatureFork(resistance);
         switch (resistance)
         {
             case ClothingItem.NO_RES:
-                return context.getString(R.string.no_temp_res, 20);
+                return context.getString(R.string.no_temp_res, resFork.first);
             case ClothingItem.LIGHT_RES:
-                return context.getString(R.string.light_temp_res, 15, 20);
+                return context.getString(R.string.light_temp_res, resFork.first, resFork.second);
             case ClothingItem.MEDIUM_RES:
-                return context.getString(R.string.medium_temp_res, 5, 15);
+                return context.getString(R.string.medium_temp_res, resFork.first, resFork.second);
             case ClothingItem.HIGH_RES:
-                return context.getString(R.string.high_temp_res, 0, 5);
+                return context.getString(R.string.high_temp_res, resFork.first, resFork.second);
             case ClothingItem.VERY_HIGH_RES:
-                return context.getString(R.string.very_high_temp_res, 0);
+                return context.getString(R.string.very_high_temp_res, resFork.second);
             default:
-                throw new AssertionError("Unsupported resistance level");
+                throw new UnsupportedOperationException("Unsupported resistance level => " + resistance);
+        }
+    }
+
+    public static String getColdResistanceContentDesc(Context context, @ClothingItem.Resistance int resistance)
+    {
+        switch (resistance)
+        {
+            case ClothingItem.HIGH_RES:
+                return context.getString(R.string.high_cold_res_cd);
+            case ClothingItem.LIGHT_RES:
+                return context.getString(R.string.light_cold_res_cd);
+            case ClothingItem.MEDIUM_RES:
+                return context.getString(R.string.medium_cold_res_cd);
+            case ClothingItem.NO_RES:
+                return context.getString(R.string.no_cold_res_cd);
+            case ClothingItem.VERY_HIGH_RES:
+                return context.getString(R.string.very_high_cold_res_cd);
+            default:
+                throw new UnsupportedOperationException("Unsupported resistance level => " + resistance);
         }
     }
 
@@ -284,5 +343,31 @@ public class Utilities
             return ClothingItem.HIGH_RES;
         else
             return ClothingItem.VERY_HIGH_RES;
+    }
+
+    public static CharSequence getWeatherDescription(@WeatherItem.WeatherType int weatherType, Context context)
+    {
+        switch (weatherType)
+        {
+
+            case WeatherItem.CLEAR_SKY:
+                return context.getString(R.string.clear_sky);
+            case WeatherItem.CLOUDS:
+                return context.getString(R.string.clouds);
+            case WeatherItem.FOG:
+                return context.getString(R.string.fog);
+            case WeatherItem.LIGHT_CLOUDS:
+                return context.getString(R.string.l_clouds);
+            case WeatherItem.LIGHT_RAIN:
+                return context.getString(R.string.l_rain);
+            case WeatherItem.RAIN:
+                return context.getString(R.string.rain);
+            case WeatherItem.SNOW:
+                return context.getString(R.string.snow);
+            case WeatherItem.STORM:
+                return context.getString(R.string.storm);
+            default:
+                throw new UnsupportedOperationException("Unsupported weather type => " + weatherType);
+        }
     }
 }

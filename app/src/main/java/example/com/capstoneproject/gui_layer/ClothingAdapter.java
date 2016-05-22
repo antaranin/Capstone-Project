@@ -53,6 +53,7 @@ public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.Clot
         ClothingItem clothingItem = cursor.getItem();
         holder.name_tv.setText(clothingItem.getName());
         Context context = holder.type_iv.getContext();
+        holder.itemView.setContentDescription(context.getString(R.string.select_item_template, clothingItem.getName()));
         Picasso.with(context)
                 .load(Utilities.getClothingTypeDrawableRes(clothingItem.getType()))
                 .into(holder.type_iv);
