@@ -11,6 +11,7 @@
         android:id="@+id/item_photo_iv"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:contentDescription="@string/long_press_to_add_or_change_photo"
         android:background="?attr/colorPrimaryDark"
 
         />

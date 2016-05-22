@@ -5,6 +5,7 @@ import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -70,6 +71,7 @@ public class ItemTypeFragment extends Fragment
 
         int textMargins = getResources().getDimensionPixelSize(R.dimen.large_margin_padding);
         int imageTopMargin = getResources().getDimensionPixelSize(R.dimen.medium_margin_padding);
+        float textSize = getResources().getDimension(R.dimen.large_text_size);
         for (int i = 0; i < types.length; i++)
         {
             @ClothingItem.ClothingType
@@ -84,6 +86,7 @@ public class ItemTypeFragment extends Fragment
             iv.setId(i);
             TextView tv = new TextView(getContext());
             tv.setText(clothingDesc);
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
             tv.setGravity(Gravity.CENTER);
             tv.setId(i + types.length);
             rl.addView(iv);
@@ -174,8 +177,8 @@ public class ItemTypeFragment extends Fragment
     {
         currentTypePos ++;
         currentTypePos %= types.length;
-        imageFlipper.setInAnimation(getActivity(), R.anim.left_in);
-        imageFlipper.setOutAnimation(getActivity(), R.anim.right_out);
+        imageFlipper.setInAnimation(getActivity(), R.anim.right_in);
+        imageFlipper.setOutAnimation(getActivity(), R.anim.left_out);
         imageFlipper.showNext();
     }
 
@@ -183,8 +186,8 @@ public class ItemTypeFragment extends Fragment
     {
         currentTypePos += types.length - 1; //We remove one and then add a whole length to keep modulo positive
         currentTypePos %= types.length;
-        imageFlipper.setInAnimation(getActivity(), R.anim.right_in);
-        imageFlipper.setOutAnimation(getActivity(), R.anim.left_out);
+        imageFlipper.setInAnimation(getActivity(), R.anim.left_in);
+        imageFlipper.setOutAnimation(getActivity(), R.anim.right_out);
         imageFlipper.showPrevious();
     }
 

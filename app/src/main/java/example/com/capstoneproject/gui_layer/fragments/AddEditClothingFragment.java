@@ -306,7 +306,6 @@ public class AddEditClothingFragment extends Fragment
             noPhotoTv.setVisibility(View.VISIBLE);
         else
             noPhotoTv.setVisibility(View.GONE);
-        itemPhotoIv.setContentDescription(displayedItem.getName());
         Picasso.with(getContext())
                 .load(imageFile)
                 .into(itemPhotoIv);
