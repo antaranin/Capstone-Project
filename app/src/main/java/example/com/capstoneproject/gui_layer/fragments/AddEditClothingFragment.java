@@ -262,6 +262,7 @@ public class AddEditClothingFragment extends Fragment
         draftItem = new ClothingItem();
         resetViews();
         setFabsToAddEditMode(true);
+        setEnableInput(true);
     }
 
     private void resetViews()
@@ -282,6 +283,7 @@ public class AddEditClothingFragment extends Fragment
         else
             noPhotoTv.setVisibility(View.GONE);
         processConfirmationBtnColor();
+        changeDisplayedName(displayedItem.getName());
     }
 
     @DebugLog

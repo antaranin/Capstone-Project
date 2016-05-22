@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.googlecode.totallylazy.Sequence;
@@ -18,6 +19,7 @@ import example.com.capstoneproject.data_layer.WeatherItem;
 import example.com.capstoneproject.management_layer.Utilities;
 import example.com.capstoneproject.model_layer.ClothingItem;
 import example.com.capstoneproject.model_layer.methods.Func2;
+import hugo.weaving.DebugLog;
 import icepick.Icepick;
 import icepick.State;
 import lombok.Getter;
@@ -30,6 +32,8 @@ import static com.googlecode.totallylazy.Sequences.sequence;
  */
 public class SuggestionProcessor
 {
+    private static final String TAG = SuggestionProcessor.class.getSimpleName();
+
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({TORSO, LEGS})
     private @interface BodyPartCovered
@@ -52,6 +56,7 @@ public class SuggestionProcessor
     @Setter
     private OnSuggestionMadeListener listener;
 
+    @DebugLog
     public void extractDataFromCursor(Cursor cursor)
     {
         ClothingCursor clothingCursor = new ClothingCursor(cursor);
@@ -76,6 +81,7 @@ public class SuggestionProcessor
             onDataChanged();
     }
 
+    @DebugLog
     public void setWeatherData(WeatherItem weatherData)
     {
         currentWeather = weatherData;
@@ -206,7 +212,9 @@ public class SuggestionProcessor
         }
 
         List<GradedItemGroup> allItemsGrouped = layers.length > 0 ?
-                groupCollect(layers, layers.length - 1, layeredItems, new ArrayList<>()) : new ArrayList<>();
+                groupCollect(layers, 0, layeredItems, new ArrayList<>()) : new ArrayList<>();
+
+        log("All items grouped => " + allItemsGrouped);
 
         GradedItemGroup bestGroup = null;
         for (GradedItemGroup group : allItemsGrouped)
@@ -229,18 +237,18 @@ public class SuggestionProcessor
         {
             ArrayList<GradedItem> items = new ArrayList<>(gatheredItems);
             items.add(item);
-            if (level == 0)
+            if (level == layers.length - 1)
                 groups.add(new GradedItemGroup(items));
             else
-                groups.addAll(groupCollect(layers, level - 1, layeredItems, items));
+                groups.addAll(groupCollect(layers, level + 1, layeredItems, items));
         }
-        if (level != layers.length - 1)
+        if (level != 0)
         {
             ArrayList<GradedItem> items = new ArrayList<>(gatheredItems);
-            if (level == 0)
+            if (level == layers.length - 1)
                 groups.add(new GradedItemGroup(items));
             else
-                groups.addAll(groupCollect(layers, level - 1, layeredItems, items));
+                groups.addAll(groupCollect(layers, level + 1, layeredItems, items));
 
         }
         return groups;
@@ -297,6 +305,11 @@ public class SuggestionProcessor
             default:
                 throw new UnsupportedOperationException("Unsupported type => " + clothingType);
         }
+    }
+
+    private void log(String message)
+    {
+        Log.d(TAG, message);
     }
 
     public interface OnSuggestionMadeListener

@@ -16,12 +16,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import java.util.Arrays;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import example.com.capstoneproject.R;
+import example.com.capstoneproject.management_layer.Utilities;
 import example.com.capstoneproject.model_layer.ClothingItem;
 import hugo.weaving.DebugLog;
+import icepick.Icepick;
+import icepick.State;
 import lombok.Setter;
 
 /**
@@ -33,11 +38,12 @@ public class ItemTypeFragment extends Fragment
     @BindView(R.id.type_imge_flipper)
     ViewFlipper imageFlipper;
 
-    @ClothingItem.ClothingType
-    private int currentType = ClothingItem.T_SHIRT;
+    @State
+    int currentTypePos = -1;
 
-    private int[] drawables= { R.drawable.ic_t_shirt, R.drawable.ic_wind, R.drawable.ic_wind_fill};
-    private String[] typeDescs;
+    private static Integer[] types = {ClothingItem.T_SHIRT, ClothingItem.SHIRT, ClothingItem.BLOUSE,
+            ClothingItem.JACKET, ClothingItem.SKIRT, ClothingItem.TROUSERS};
+
 
     @Setter
     private OnTypeInteractionListener listener;
@@ -61,24 +67,26 @@ public class ItemTypeFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        typeDescs = getContext().getResources().getStringArray(R.array.clothing_type_descs);
 
-        for (int i = 0; i < drawables.length; i++)
+        for (int i = 0; i < types.length; i++)
         {
+            @ClothingItem.ClothingType
+            int type = types[i];
+
             RelativeLayout rl = new RelativeLayout(getContext());
             rl.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT));
             ImageView iv = new ImageView(getContext());
-            iv.setImageResource(drawables[i]);
+            iv.setImageResource(Utilities.getClothingTypeDrawableRes(type));
             iv.setId(i);
             TextView tv = new TextView(getContext());
-            tv.setText(typeDescs[i]);
+            tv.setText(Utilities.getClothingDesc(getContext(), type));
             tv.setGravity(Gravity.CENTER);
-            tv.setId(i + drawables.length);
+            tv.setId(i + types.length);
             rl.addView(iv);
             rl.addView(tv);
 
             RelativeLayout.LayoutParams ivLayParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
-            ivLayParams.addRule(RelativeLayout.ABOVE, i + drawables.length);
+            ivLayParams.addRule(RelativeLayout.ABOVE, i + types.length);
             ivLayParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
             iv.setLayoutParams(ivLayParams);
 
@@ -90,42 +98,90 @@ public class ItemTypeFragment extends Fragment
         }
         final GestureDetector detector = new GestureDetector(getContext(), new SlideListener());
         imageFlipper.setOnTouchListener((v, event) -> detector.onTouchEvent(event));
-/*        imageFlipper.setOnTouchListener((v, event) -> {
-            Log.d(TAG, "onViewCreated: touchy touchy");
-            return true;
-        });*/
+
+        if(savedInstanceState != null)
+            restoreInstance(savedInstanceState);
+        else
+            createNewInstance();
+    }
+
+    private void createNewInstance()
+    {
+        if(currentTypePos == -1)
+            currentTypePos = 0;
+        if(imageFlipper.getDisplayedChild() != currentTypePos)
+            moveTo(currentTypePos);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this, outState);
+    }
+
+    private void restoreInstance(Bundle savedState)
+    {
+        int savedCurrentTypePos = currentTypePos;
+        Icepick.restoreInstanceState(this, savedState);
+        //this is here to avoid overwriting value provided in setItem, if it was called before instance restoration
+        if(savedCurrentTypePos != -1)
+            currentTypePos = savedCurrentTypePos;
+        moveTo(currentTypePos);
     }
 
     @OnClick(R.id.confirm_fab)
     void onConfirmBtnPressed()
     {
-        if(listener != null)
-            listener.onTypeSelected(currentType);
+        if (listener != null)
+            listener.onTypeSelected(types[currentTypePos]);
     }
 
     @OnClick(R.id.cancel_fab)
     void onCancelBtnPressed()
     {
-        if(listener != null)
+        if (listener != null)
             listener.onTypeSelectionCancelled();
     }
 
-    public void setItem(@Nullable  ClothingItem item)
+    public void setItem(@Nullable ClothingItem item)
     {
-        if(item == null)
-            currentType = ClothingItem.T_SHIRT;
+        if (item == null)
+            currentTypePos = 0;
         else
-            currentType = item.getType();
+            currentTypePos = Arrays.asList(types).indexOf(item.getType());
+        if(imageFlipper != null)
+            moveTo(currentTypePos);
     }
 
-    public static ItemTypeFragment createFragment(@Nullable  ClothingItem item)
+    public static ItemTypeFragment createFragment(@Nullable ClothingItem item)
     {
         ItemTypeFragment fragment = new ItemTypeFragment();
-        if(item == null)
-            fragment.currentType = ClothingItem.T_SHIRT;
+        if (item == null)
+            fragment.currentTypePos = 0;
         else
-            fragment.currentType = item.getType();
+            fragment.currentTypePos = Arrays.asList(types).indexOf(item.getType());
         return fragment;
+    }
+
+    private void moveToNextItem()
+    {
+        currentTypePos ++;
+        currentTypePos %= types.length;
+        imageFlipper.showNext();
+    }
+
+    private void moveToPreviousItem()
+    {
+        currentTypePos += types.length - 1; //We remove one and then add a whole length to keep modulo positive
+        currentTypePos %= types.length;
+        imageFlipper.showPrevious();
+    }
+
+    private void moveTo(int position)
+    {
+        currentTypePos = position;
+        imageFlipper.setDisplayedChild(position);
     }
 
     private class SlideListener extends GestureDetector.SimpleOnGestureListener
@@ -149,10 +205,10 @@ public class ItemTypeFragment extends Fragment
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
         {
-            if(velocityX > 100)
-                imageFlipper.showPrevious();
-            else if(velocityX < -100)
-                imageFlipper.showNext();
+            if (velocityX > 100)
+                moveToPreviousItem();
+            else if (velocityX < -100)
+                moveToNextItem();
             else
                 return false;
             return true;

@@ -31,15 +31,15 @@
     <string name="swipe_left_or_right_to_change">Swipe left or right to change</string>
     <string name="content_authority">example.com.capstoneproject</string>
     <string name="sync_account_type">capstoneproject.example.com</string>
-    <string-array name="clothing_type_descs">
-        <item>T shirt</item>
-        <item>Trousers</item>
-        <item>Jacket</item>
-        <item>Shirt</item>
-    </string-array>
     <string name="title_activity_permision">PermisionActivity</string>
     <string name="grant_permissions">Grant permissions</string>
     <string name="format_wind_kmh"><xliff:g id="speed">%1$1.0f</xliff:g> km/h</string>
     <string name="format_wind_mph"><xliff:g id="speed">%1$1.0f</xliff:g> mph</string>
     <string name="format_temperature"><xliff:g id="temp">%1.0f</xliff:g>\u00B0</string>
+    <string name="blouse">Blouse</string>
+    <string name="jacket">Jacket</string>
+    <string name="t_shirt">T-Shirt</string>
+    <string name="trousers">Trousers</string>
+    <string name="skirt">Skirt</string>
+    <string name="shirt">Shirt</string>
 </resources>

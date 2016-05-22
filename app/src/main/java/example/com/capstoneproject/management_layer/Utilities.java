@@ -75,24 +75,23 @@ public class Utilities
 
     public static String getClothingDesc(Context context, @ClothingItem.ClothingType int type)
     {
-
-        //TODO  implement
-        throw new UnsupportedOperationException("Not implemented");
-/*        switch (type)
+        switch (type)
         {
-            case ClothingItem.NO_RES:
-                return context.getString(R.string.no_temp_res);
-            case ClothingItem.LIGHT_RES:
-                return context.getString(R.string.light_temp_res);
-            case ClothingItem.MEDIUM_RES:
-                return context.getString(R.string.medium_temp_res);
-            case ClothingItem.HIGH_RES:
-                return context.getString(R.string.high_temp_res);
-            case ClothingItem.VERY_HIGH_RES:
-                return context.getString(R.string.very_high_temp_res);
+            case ClothingItem.BLOUSE:
+                return context.getString(R.string.blouse);
+            case ClothingItem.JACKET:
+                return context.getString(R.string.jacket);
+            case ClothingItem.SHIRT:
+                return context.getString(R.string.shirt);
+            case ClothingItem.SKIRT:
+                return context.getString(R.string.skirt);
+            case ClothingItem.TROUSERS:
+                return context.getString(R.string.trousers);
+            case ClothingItem.T_SHIRT:
+                return context.getString(R.string.t_shirt);
             default:
-                throw new AssertionError("Unsupported resistance level");
-        }*/
+                throw new AssertionError("Unsupported type => " + type);
+        }
     }
 
     @DrawableRes
@@ -103,15 +102,15 @@ public class Utilities
             case ClothingItem.T_SHIRT:
                 return R.drawable.ic_t_shirt;
             case ClothingItem.JACKET:
-                throw new UnsupportedOperationException("Unsupported type => " + type);
+                return R.drawable.ic_jacket;
             case ClothingItem.SHIRT:
-                throw new UnsupportedOperationException("Unsupported type => " + type);
+                return R.drawable.ic_shirt;
             case ClothingItem.TROUSERS:
-                throw new UnsupportedOperationException("Unsupported type => " + type);
+                return R.drawable.ic_trousers;
             case ClothingItem.BLOUSE:
-                throw new UnsupportedOperationException("Unsupported type => " + type);
+                return R.drawable.ic_blouse;
             case ClothingItem.SKIRT:
-                throw new UnsupportedOperationException("Unsupported type => " + type);
+                return R.drawable.ic_skirt;
             default:
                 throw new UnsupportedOperationException("Unsupported type => " + type);
         }
@@ -285,5 +284,4 @@ public class Utilities
         else
             return ClothingItem.VERY_HIGH_RES;
     }
-
 }
