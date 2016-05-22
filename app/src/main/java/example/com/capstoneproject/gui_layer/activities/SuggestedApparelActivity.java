@@ -24,10 +24,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import example.com.capstoneproject.BuildConfig;
 import example.com.capstoneproject.R;
 import example.com.capstoneproject.data_layer.DataContract;
 import example.com.capstoneproject.data_layer.WeatherItem;
@@ -46,6 +51,7 @@ import lombok.NonNull;
 public class SuggestedApparelActivity extends AppCompatActivity
         implements SuggestedApparelAdapter.OnItemLongClickedListener, SuggestionProcessor.OnSuggestionMadeListener
 {
+    private InterstitialAd interstitialAd;
     private static final int REQUEST_LOCATION_PERMISSIONS = 42;
     @BindView(R.id.current_weather_iv)
     ImageView weatherIv;
@@ -95,6 +101,8 @@ public class SuggestedApparelActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggested_apparel);
 
+        prepareAd();
+
         suggestionProcessor = new SuggestionProcessor();
         suggestionProcessor.setListener(this);
 
@@ -121,6 +129,29 @@ public class SuggestedApparelActivity extends AppCompatActivity
             createNewInstance();
 
         requestPermissionsIfNeeded(getIntent().getAction());
+    }
+
+    private void prepareAd()
+    {
+        interstitialAd = new InterstitialAd(this);
+        interstitialAd.setAdUnitId(BuildConfig.AD_UNIT_ID);
+        interstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+                goToItemList();
+            }
+        });
+
+        requestNewInterstitial();
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("SEE_YOUR_LOGCAT_TO_GET_YOUR_DEVICE_ID")
+                .build();
+
+        interstitialAd.loadAd(adRequest);
     }
 
     @Override
@@ -251,7 +282,10 @@ public class SuggestedApparelActivity extends AppCompatActivity
         switch (item.getItemId())
         {
             case R.id.action_item_list:
-                goToItemList();
+                if(interstitialAd.isLoaded())
+                    interstitialAd.show();
+                else
+                    goToItemList();
                 return true;
             case R.id.action_settings:
                 return true;
