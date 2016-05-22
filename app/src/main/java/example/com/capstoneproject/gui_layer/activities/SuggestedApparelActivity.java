@@ -172,7 +172,10 @@ public class SuggestedApparelActivity extends AppCompatActivity
     private void extractClothingData()
     {
         Cursor cursor = getContentResolver().query(DataContract.ClothingEntry.CONTENT_URI, null, null, null, null);
+        if(cursor == null)
+            return;
         suggestionProcessor.extractDataFromCursor(cursor);
+        cursor.close();
     }
 
     private void fillTopWithData(@NonNull WeatherItem weatherItem)

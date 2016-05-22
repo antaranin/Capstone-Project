@@ -118,7 +118,7 @@ public class WeatherUpdateService extends IntentService
                 .weatherType(WeatherItem.translateWeatherIdToWeatherType(response.getWeather().get(0).getId()))
                 .windSpeed(Math.round(response.getWind().getSpeed()))
                 .temperature(Math.round(response.getMain().getTemp()))
-                .rainPrecipitate(response.getRain().getPrecipitationPer3H())
+                .rainPrecipitate(response.getRain() != null ? response.getRain().getPrecipitationPer3H() : 0)
                 .build();
 
         WeatherPreferenceModule preferenceModule = new WeatherPreferenceModule(this);
@@ -130,7 +130,7 @@ public class WeatherUpdateService extends IntentService
     @DebugLog
     private boolean isValidResponse(WeatherResponse response)
     {
-        return response != null && response.getMain() != null && response.getWind() != null && response.getRain() != null
+        return response != null && response.getMain() != null && response.getWind() != null
                 && response.getWeather() != null && !response.getWeather().isEmpty();
     }
 

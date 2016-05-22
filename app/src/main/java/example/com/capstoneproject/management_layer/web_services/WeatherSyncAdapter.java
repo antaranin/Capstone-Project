@@ -15,7 +15,6 @@ import android.content.IntentFilter;
 import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -30,23 +29,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.http.converter.json.GsonHttpMessageConverter;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import example.com.capstoneproject.BuildConfig;
 import example.com.capstoneproject.R;
-import example.com.capstoneproject.data_layer.WeatherItem;
-import example.com.capstoneproject.data_layer.WeatherPreferenceModule;
 import example.com.capstoneproject.gui_layer.activities.PermisionActivity;
 import example.com.capstoneproject.management_layer.Utilities;
 import hugo.weaving.DebugLog;
-import lombok.NonNull;
 
 /**
  * Created by Arin on 20/05/16.
@@ -216,6 +204,7 @@ public class WeatherSyncAdapter extends AbstractThreadedSyncAdapter
         // WEATHER_NOTIFICATION_ID allows you to update the notification later on.
         mNotificationManager.notify(PERMISSION_NOTIF_ID, notifBuilder.build());
     }
+/*
 
     @DebugLog
     private WeatherResponse requestTodayForecast(@NonNull Location userLocation)
@@ -246,7 +235,9 @@ public class WeatherSyncAdapter extends AbstractThreadedSyncAdapter
         }
         return null;
     }
+*/
 
+/*
     @DebugLog
     private void processWeatherResponse(WeatherResponse response)
     {
@@ -278,6 +269,7 @@ public class WeatherSyncAdapter extends AbstractThreadedSyncAdapter
         return response.getMain() != null && response.getWind() != null && response.getRain() != null
                 && response.getWeather() != null && !response.getWeather().isEmpty();
     }
+*/
 
     private void logd(String message)
     {

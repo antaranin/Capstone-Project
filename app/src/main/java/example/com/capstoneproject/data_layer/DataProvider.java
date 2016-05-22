@@ -2,6 +2,7 @@ package example.com.capstoneproject.data_layer;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import example.com.capstoneproject.management_layer.Utilities;
 import hugo.weaving.DebugLog;
 
 /**
@@ -92,7 +94,7 @@ public class DataProvider extends ContentProvider
             default:
                 throw new UnsupportedOperationException("Unsupported uri => " + uri);
         }
-        notifyResolverOfChange(uri);
+        notifyOfChange(uri);
         return returnUri;
     }
 
@@ -113,7 +115,7 @@ public class DataProvider extends ContentProvider
         }
 
         if(rowsDeleted > 0)
-            notifyResolverOfChange(uri);
+            notifyOfChange(uri);
 
         return rowsDeleted;
     }
@@ -136,15 +138,16 @@ public class DataProvider extends ContentProvider
 
         }
         if(rowsUpdated > 0)
-            notifyResolverOfChange(uri);
+            notifyOfChange(uri);
 
         return rowsUpdated;
     }
 
-    private void notifyResolverOfChange(Uri uri)
+    private void notifyOfChange(Uri uri)
     {
         //noinspection ConstantConditions
         getContext().getContentResolver().notifyChange(uri, null);
+        getContext().sendBroadcast(new Intent(Utilities.CLOTHING_ITEMS_CHANGED_BROADCAST));
     }
 
     private static UriMatcher createMatcher()

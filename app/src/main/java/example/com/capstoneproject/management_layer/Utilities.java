@@ -13,7 +13,8 @@ import example.com.capstoneproject.model_layer.ClothingItem;
  */
 public class Utilities
 {
-    public static final String WEATHER_ITEM_UPDATED_BROADCAST = "weather_item_updated_broadcast";
+    public static final String WEATHER_ITEM_UPDATED_BROADCAST = "example.com.capstoneproject.WEATHER_ITEM_UPDATED";
+    public static final String CLOTHING_ITEMS_CHANGED_BROADCAST = "example.com.capstoneproject.CLOTHING_ITEMS_CHANGED";
 
     public static String getWaterResistanceDesc(Context context, @ClothingItem.Resistance int resistance)
     {

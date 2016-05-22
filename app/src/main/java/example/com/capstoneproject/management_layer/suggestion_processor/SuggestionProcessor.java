@@ -23,6 +23,7 @@ import hugo.weaving.DebugLog;
 import icepick.Icepick;
 import icepick.State;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 import static com.googlecode.totallylazy.Sequences.sequence;
@@ -33,6 +34,9 @@ import static com.googlecode.totallylazy.Sequences.sequence;
 public class SuggestionProcessor
 {
     private static final String TAG = SuggestionProcessor.class.getSimpleName();
+    @Setter
+    @Getter
+    private boolean workInBackground = true;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({TORSO, LEGS})
@@ -57,7 +61,7 @@ public class SuggestionProcessor
     private OnSuggestionMadeListener listener;
 
     @DebugLog
-    public void extractDataFromCursor(Cursor cursor)
+    public void extractDataFromCursor(@NonNull  Cursor cursor)
     {
         ClothingCursor clothingCursor = new ClothingCursor(cursor);
         allItems = new ArrayList<>();
@@ -100,24 +104,34 @@ public class SuggestionProcessor
         final int[] windResGrading = gradeItemsByWind(allItems, currentWeather.getWindSpeed());
         final int[] waterResGrading = gradeItemsByWater(allItems, currentWeather.getRainPrecipitate());
 
-        new AsyncTask<Void, Void, ArrayList<ClothingItem>>()
+        if(workInBackground)
         {
-
-            @Override
-            protected ArrayList<ClothingItem> doInBackground(Void... params)
+            new AsyncTask<Void, Void, ArrayList<ClothingItem>>()
             {
-                ArrayList<GradedItem> gradedItems = createGradedItems(allItems, coldResGrading, windResGrading, waterResGrading);
-                return createSuggestion(gradedItems);
-            }
 
-            @Override
-            protected void onPostExecute(ArrayList<ClothingItem> clothingItems)
-            {
-                suggestedItems = clothingItems;
-                if (listener != null)
-                    listener.onSuggestionMade(clothingItems);
-            }
-        }.execute();
+                @Override
+                protected ArrayList<ClothingItem> doInBackground(Void... params)
+                {
+                    ArrayList<GradedItem> gradedItems = createGradedItems(allItems, coldResGrading, windResGrading, waterResGrading);
+                    return createSuggestion(gradedItems);
+                }
+
+                @Override
+                protected void onPostExecute(ArrayList<ClothingItem> clothingItems)
+                {
+                    suggestedItems = clothingItems;
+                    if (listener != null)
+                        listener.onSuggestionMade(clothingItems);
+                }
+            }.execute();
+        }
+        else
+        {
+            ArrayList<GradedItem> gradedItems = createGradedItems(allItems, coldResGrading, windResGrading, waterResGrading);
+            suggestedItems = createSuggestion(gradedItems);
+            if (listener != null)
+                listener.onSuggestionMade(suggestedItems);
+        }
     }
 
     private ArrayList<GradedItem> createGradedItems(ArrayList<ClothingItem> items,

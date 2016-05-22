@@ -31,7 +31,6 @@
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
         public final static String LOCATION_BROADCAST = "location_broadcast";
         public final static String LOCATION_BROADCAST = "location_broadcast";
-
         <provider
             android:name=".data_layer.DataProvider"
             android:authorities="@string/authority"
@@ -76,6 +75,27 @@
         <service
             android:name=".management_layer.web_services.WeatherUpdateService"
             android:exported="false"
+            >
+        </service>
+
+        <receiver android:name=".gui_layer.SuggestedApparelWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="example.com.capstoneproject.WEATHER_ITEM_UPDATED"/>
+                <action android:name="example.com.capstoneproject.CLOTHING_ITEMS_CHANGED"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/suggested_apparel_widget_info"
+                />
+        </receiver>
+
+        <service
+            android:name=".management_layer.WidgetRemoteViewsService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
             >
         </service>
     </application>

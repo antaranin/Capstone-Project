@@ -1,0 +1,28 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widgetMainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/widget_margin"
+    android:background="@color/primary"
+    >
+
+    <GridView
+        android:id="@+id/widget_grid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="2"
+        />
+
+    <TextView
+        android:id="@+id/widget_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:text="@string/no_items_found_please_add_some"
+        android:textColor="@color/text_light"
+        android:textSize="24sp"
+        android:textStyle="bold|italic"
+        />
+
+</FrameLayout>
