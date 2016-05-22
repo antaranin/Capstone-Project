@@ -117,7 +117,14 @@ public class SuggestedApparelActivity extends AppCompatActivity
             createNewInstance();
 
         requestPermissionsIfNeeded(getIntent().getAction());
+    }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this, outState);
+        suggestionProcessor.saveInstanceState(outState);
     }
 
     private void requestPermissionsIfNeeded(String action)
@@ -156,14 +163,13 @@ public class SuggestedApparelActivity extends AppCompatActivity
         extractClothingData();
     }
 
-
-
-    private void restoreInstance(Bundle savedInstanceState)
+   private void restoreInstance(Bundle savedInstanceState)
     {
         Icepick.restoreInstanceState(this, savedInstanceState);
         if (currentWeather != null)
             fillTopWithData(currentWeather);
         suggestionProcessor.restoreInstanceState(savedInstanceState);
+        extractClothingData();
     }
 
     @Override
@@ -267,7 +273,6 @@ public class SuggestedApparelActivity extends AppCompatActivity
 
     private class WeatherChangeReceiver extends BroadcastReceiver
     {
-
         @Override
         public void onReceive(Context context, Intent intent)
         {

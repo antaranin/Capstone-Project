@@ -60,6 +60,10 @@ public class SuggestionProcessor
     @Setter
     private OnSuggestionMadeListener listener;
 
+    public SuggestionProcessor()
+    {
+    }
+
     @DebugLog
     public void extractDataFromCursor(@NonNull  Cursor cursor)
     {
