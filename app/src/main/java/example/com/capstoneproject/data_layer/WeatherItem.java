@@ -16,7 +16,6 @@ import lombok.Data;
 @Data
 public class WeatherItem implements Parcelable
 {
-
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({STORM, LIGHT_RAIN, RAIN, SNOW, FOG, CLEAR_SKY, LIGHT_CLOUDS, CLOUDS})
     public @interface WeatherType { }
@@ -29,7 +28,6 @@ public class WeatherItem implements Parcelable
     public static final int CLEAR_SKY = 6;
     public static final int LIGHT_CLOUDS = 7;
     public static final int CLOUDS = 8;
-
 
     @WeatherType
     private int weatherType;

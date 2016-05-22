@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".gui_layer.fragments.AddEditClothingFragment"
     >
 
@@ -56,7 +57,7 @@
         android:id="@+id/add_confirm_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_add"
+        app:srcCompat="@drawable/ic_add"
         android:layout_marginEnd="@dimen/large_margin_padding"
         android:layout_above="@+id/item_param_ll"
         android:layout_alignParentEnd="true"
@@ -67,7 +68,7 @@
         android:id="@+id/edit_cancel_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_edit"
+        app:srcCompat="@drawable/ic_edit"
         android:layout_above="@+id/add_confirm_fab"
         android:layout_alignStart="@+id/add_confirm_fab"
         android:layout_marginBottom="@dimen/large_margin_padding"

@@ -12,7 +12,7 @@ import hugo.weaving.DebugLog;
 public abstract class SingleSelectionAdapter<VH extends SingleSelectionAdapter.SingleSelectionHolder>
         extends RecyclerView.Adapter<VH>
 {
-    private int selected_item = 0;
+    private int selected_item = -1;
     private RecyclerView recyclerView;
 
     @Override

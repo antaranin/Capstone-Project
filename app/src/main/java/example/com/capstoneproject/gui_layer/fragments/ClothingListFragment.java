@@ -46,21 +46,27 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
 {
     private static final int CLOTHING_LOADER = 0;
 
+    @Nullable
     @BindView(R.id.item_preview_layout)
     LinearLayout previewLayout;
 
+    @Nullable
     @BindView(R.id.item_photo_iv)
     ImageView photoPreviewIv;
 
+    @Nullable
     @BindView(R.id.clothing_type_btn)
     ImageView clothingTypeIv;
 
+    @Nullable
     @BindView(R.id.water_res_btn)
     FillableView waterResFv;
 
+    @Nullable
     @BindView(R.id.wind_res_btn)
     FillableView windResFv;
 
+    @Nullable
     @BindView(R.id.cold_res_btn)
     FillableView coldResFv;
 
@@ -70,6 +76,7 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
     @BindView(R.id.no_item_tv)
     TextView noItemTv;
 
+    @Nullable
     @BindView(R.id.add_item_fab_clf)
     FloatingActionButton addItemFab;
 
@@ -91,7 +98,7 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
         super.onCreate(savedInstanceState);
         clothingAdapter = new ClothingAdapter();
         clothingAdapter.setListener(this);
-        if(savedInstanceState != null)
+        if (savedInstanceState != null)
             restoreInstance(savedInstanceState);
     }
 
@@ -111,7 +118,7 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
         ButterKnife.bind(this, view);
         recycler.setAdapter(clothingAdapter);
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        if(savedInstanceState != null)
+        if (savedInstanceState != null)
             restoreInstance(savedInstanceState);
     }
 
@@ -131,9 +138,9 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
     public void onResume()
     {
         super.onResume();
-        if(!isTabletLand)
+        if (!isTabletLand)
             //noinspection ConstantConditions
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.item_list);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.item_list);
     }
 
     @Optional
@@ -187,20 +194,28 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
         clothingAdapter.setData(data);
         if (data.getCount() == 0)
         {
-            previewLayout.setVisibility(View.GONE);
+            if (previewLayout != null)
+                previewLayout.setVisibility(View.GONE);
             noItemTv.setVisibility(View.VISIBLE);
-            RelativeLayout.LayoutParams fabParams = (RelativeLayout.LayoutParams) addItemFab.getLayoutParams();
-            fabParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-            fabParams.removeRule(RelativeLayout.BELOW);
+            if(addItemFab != null)
+            {
+                RelativeLayout.LayoutParams fabParams = (RelativeLayout.LayoutParams) addItemFab.getLayoutParams();
+                fabParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                fabParams.removeRule(RelativeLayout.BELOW);
+            }
             return;
         }
-        else if(noItemTv.getVisibility() != View.GONE)
+        else if (noItemTv.getVisibility() != View.GONE)
         {
-            previewLayout.setVisibility(View.VISIBLE);
+            if (previewLayout != null)
+                previewLayout.setVisibility(View.VISIBLE);
             noItemTv.setVisibility(View.GONE);
-            RelativeLayout.LayoutParams fabParams = (RelativeLayout.LayoutParams) addItemFab.getLayoutParams();
-            fabParams.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-            fabParams.addRule(RelativeLayout.BELOW, R.id.item_preview_layout);
+            if(addItemFab != null)
+            {
+                RelativeLayout.LayoutParams fabParams = (RelativeLayout.LayoutParams) addItemFab.getLayoutParams();
+                fabParams.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                fabParams.addRule(RelativeLayout.BELOW, R.id.item_preview_layout);
+            }
         }
 
         recycler.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
@@ -211,7 +226,8 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
                 if (recycler.getChildCount() > 0)
                 {
                     recycler.getViewTreeObserver().removeOnPreDrawListener(this);
-                    clothingAdapter.restoreItemPosition(true);
+                    clothingAdapter.restoreItemPosition(!isTabletLand || (!clothingAdapter.hasSavedPosition()
+                            && clothingAdapter.getSelection() == -1));
                     return true;
                 }
                 return false;
@@ -236,13 +252,21 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onItemSelected(ClothingItem selectedItem)
     {
-        setPreviewItem(selectedItem);
+        if (isTabletLand)
+        {
+            if(listener != null)
+                listener.onViewItemRequested(selectedItem);
+        }
+        else
+        {
+            setPreviewItem(selectedItem);
+        }
     }
 
     @Override
     public void onItemEditRequested(ClothingItem item)
     {
-        if(listener != null)
+        if (listener != null)
             listener.onEditItemRequested(item);
     }
 
@@ -256,6 +280,10 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
 
     private void setPreviewItem(ClothingItem item)
     {
+        if(previewLayout == null || coldResFv == null || waterResFv == null
+                || windResFv == null || clothingTypeIv == null || photoPreviewIv == null)
+            throw new AssertionError("Preview called in unsupported layout");
+
         if (item == null)
         {
             previewLayout.setVisibility(View.GONE);
@@ -263,7 +291,7 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
         }
 
 
-        if(previewLayout.getVisibility() == View.GONE)
+        if (previewLayout.getVisibility() == View.GONE)
             previewLayout.setVisibility(View.VISIBLE);
 
         final int coldResistance = item.getColdResistance();
@@ -297,6 +325,8 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
         void onAddItemRequested();
 
         void onEditItemRequested(ClothingItem item);
+
+        void onViewItemRequested(ClothingItem item);
 
     }
 }

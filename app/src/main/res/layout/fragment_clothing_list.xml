@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".gui_layer.fragments.ClothingListFragment"
     >
 
@@ -26,7 +27,7 @@
         android:id="@+id/add_item_fab_clf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_add"
+        app:srcCompat="@drawable/ic_add"
         android:layout_below="@+id/item_preview_layout"
         android:contentDescription="@string/add_item"
         android:layout_marginTop="-8dp"

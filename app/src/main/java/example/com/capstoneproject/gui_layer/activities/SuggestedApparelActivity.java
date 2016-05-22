@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -54,6 +55,9 @@ public class SuggestedApparelActivity extends AppCompatActivity
 
     @BindView(R.id.current_temp_tv)
     TextView temperatureTv;
+
+    @BindView(R.id.no_item_tv)
+    TextView noItemTv;
 
     @State
     WeatherItem currentWeather;
@@ -206,10 +210,13 @@ public class SuggestedApparelActivity extends AppCompatActivity
         suggestionProcessor.setWeatherData(currentWeather);
         if (currentWeather == null)
         {
+            noItemTv.setText(R.string.no_weather_data);
+            noItemTv.setVisibility(View.VISIBLE);
             WeatherSyncAdapter.syncImmediately(this);
             return;
         }
-
+        if(getString(R.string.no_weather_data).equals(noItemTv.getText().toString()))
+            noItemTv.setVisibility(View.GONE);
         fillTopWithData(currentWeather);
     }
 
@@ -269,6 +276,15 @@ public class SuggestedApparelActivity extends AppCompatActivity
     public void onSuggestionMade(ArrayList<ClothingItem> suggestedItems)
     {
         adapter.setData(suggestedItems);
+        if(suggestedItems.size() > 0)
+        {
+            noItemTv.setVisibility(View.GONE);
+        }
+        else
+        {
+            noItemTv.setText(R.string.no_items_found_please_add_some);
+            noItemTv.setVisibility(View.VISIBLE);
+        }
     }
 
     private class WeatherChangeReceiver extends BroadcastReceiver

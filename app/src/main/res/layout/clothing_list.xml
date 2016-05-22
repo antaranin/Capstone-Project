@@ -10,6 +10,7 @@
         style="@style/large_tv_style"
         android:layout_centerHorizontal="true"
         android:text="@string/no_items_found_please_add_some"
+        android:visibility="gone"
         />
 
     <android.support.v7.widget.RecyclerView

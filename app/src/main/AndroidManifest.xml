@@ -11,6 +11,7 @@
 
     <application
         android:allowBackup="true"
+        android:name="android.support.multidex.MultiDexApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -26,6 +27,7 @@
         <activity
             android:name=".gui_layer.activities.ClothingActivity"
             android:theme="@style/BarAppTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             >
         </activity>
         <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>

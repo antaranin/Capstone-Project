@@ -4,6 +4,7 @@ package example.com.capstoneproject.gui_layer.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
@@ -272,6 +273,18 @@ public class AddEditClothingFragment extends Fragment
         startEditingItem();
     }
 
+    public void setItemForView(ClothingItem item)
+    {
+        currentItem = item;
+        draftItem = null;
+        if (getView() == null)
+            return;
+
+        resetViews();
+        setFabsToAddEditMode(false);
+        setEnableInput(false);
+    }
+
     private void startAddingNewItem()
     {
         currentItem = null;
@@ -410,12 +423,12 @@ public class AddEditClothingFragment extends Fragment
             Resources.Theme theme = getContext().getTheme();
             theme.resolveAttribute(R.attr.colorAccent, typedValue, true);
             int color = typedValue.data;
-            addConfirmFab.setBackgroundColor(color);
+            addConfirmFab.setBackgroundTintList(ColorStateList.valueOf(color));
             setCurrentTitle();
         }
         else
         {
-            addConfirmFab.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.grayed_out_color));
+            addConfirmFab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.grayed_out_color)));
         }
     }
 
@@ -565,6 +578,11 @@ public class AddEditClothingFragment extends Fragment
     private void log(String message)
     {
         Log.d(this.getClass().getSimpleName(), message);
+    }
+
+    public void requestAddItem()
+    {
+        startAddingNewItem();
     }
 
     public interface OnAddEditClothingInteractionListener

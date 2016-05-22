@@ -54,6 +54,7 @@ public class SuggestionProcessor
     @State
     @Getter
     ArrayList<ClothingItem> suggestedItems = new ArrayList<>();
+    
     @State
     WeatherItem currentWeather;
 

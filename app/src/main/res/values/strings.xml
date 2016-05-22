@@ -88,4 +88,5 @@
     <string name="water_res">Water resistance</string>
     <string name="wind_res">Wind resistance</string>
     <string name="cold_res">Cold resistance</string>
+    <string name="no_weather_data">No weather data available. Check your Internet connection and Location settings.</string>
 </resources>

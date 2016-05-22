@@ -63,16 +63,35 @@
     </android.support.design.widget.AppBarLayout>
 
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:scrollbarStyle="outsideOverlay"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:paddingStart="@dimen/list_side_margin"
-        android:paddingEnd="@dimen/list_side_margin"
-        android:paddingBottom="28dp"/>
+        >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:scrollbarStyle="outsideOverlay"
+            android:paddingStart="@dimen/list_side_margin"
+            android:paddingEnd="@dimen/list_side_margin"
+            android:paddingBottom="28dp"/>
+
+        <TextView
+            android:id="@+id/no_item_tv"
+            style="@style/x_large_tv_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/large_margin_padding"
+            android:gravity="center"
+            android:text="@string/no_items_found_please_add_some"
+            android:paddingStart="@dimen/large_margin_padding"
+            android:paddingEnd="@dimen/large_margin_padding"
+            android:visibility="gone"
+            />
+    </FrameLayout>
 
 
 </android.support.design.widget.CoordinatorLayout>

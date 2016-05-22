@@ -9,7 +9,7 @@
         <item name="android:layout_marginBottom">@dimen/small_margin_padding</item>
     </style>
 
-    <style name="filable_view_title_ll_style" parent="x_large_tv_style">
+    <style name="filable_view_title_ll_style" parent="large_tv_style">
         <item name="android:layout_gravity">center</item>
     </style>
 </resources>

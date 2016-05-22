@@ -96,6 +96,11 @@ public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.Clot
         resetSelection();
     }
 
+    public boolean hasSavedPosition()
+    {
+        return savedPosition != null;
+    }
+
     public void restoreItemPosition(boolean notifyListeners)
     {
         int position = savedPosition == null ? 0 : savedPosition;
