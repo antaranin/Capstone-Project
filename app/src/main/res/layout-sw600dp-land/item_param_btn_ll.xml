@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <TextView
+        style="@style/filable_view_title_ll_style"
+        android:text="@string/type"
+        android:layout_marginTop="@dimen/small_margin_padding"
+        />
+
+    <ImageView
+        android:id="@+id/clothing_type_btn"
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:src="@drawable/ic_t_shirt"
+        android:contentDescription="@string/cd_temp_val"
+        android:layout_marginTop="@dimen/medium_margin_padding"
+        android:layout_marginBottom="@dimen/medium_margin_padding"
+        />
+
+    <TextView
+        style="@style/filable_view_title_ll_style"
+        android:text="@string/water_res"
+        />
+
+    <example.com.capstoneproject.gui_layer.FillableView
+        android:id="@+id/water_res_btn"
+        style="@style/fillable_view_ll_style"
+        app:main_image="@drawable/ic_drop"
+        app:filler_image="@drawable/ic_drop_filled"
+        />
+
+    <TextView
+        style="@style/filable_view_title_ll_style"
+        android:layout_gravity="center"
+        android:text="@string/wind_res"
+        />
+
+    <example.com.capstoneproject.gui_layer.FillableView
+        android:id="@+id/wind_res_btn"
+        style="@style/fillable_view_ll_style"
+        app:main_image="@drawable/ic_wind"
+        app:filler_image="@drawable/ic_wind_fill"
+        android:paddingTop="-5dp"
+        android:paddingBottom="-5dp"
+        />
+
+    <TextView
+        style="@style/filable_view_title_ll_style"
+        android:text="@string/cold_res"
+        />
+
+    <example.com.capstoneproject.gui_layer.FillableView
+        android:id="@+id/cold_res_btn"
+        style="@style/fillable_view_ll_style"
+        app:main_image="@drawable/ic_temperature"
+        app:filler_image="@drawable/ic_temperature_fill"
+        />
+</LinearLayout>

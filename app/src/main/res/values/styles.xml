@@ -28,11 +28,15 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
-        <item name="max_fill">4</item>
+        <item name="max_fill">@integer/resistance_count</item>
     </style>
 
-    <style name="very_large_tv_style" parent="text_view_style">
-        <item name="android:textSize">@dimen/very_large_text_size</item>
+    <style name="x_large_tv_style" parent="text_view_style">
+        <item name="android:textSize">@dimen/x_large_text_size</item>
+    </style>
+
+    <style name="xx_large_tv_style" parent="text_view_style">
+        <item name="android:textSize">@dimen/xx_large_text_size</item>
     </style>
 
     <style name="NoBarAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>

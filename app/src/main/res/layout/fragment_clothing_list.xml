@@ -6,13 +6,6 @@
     tools:context=".gui_layer.fragments.ClothingListFragment"
     >
 
-    <TextView
-        android:id="@+id/no_item_tv"
-        style="@style/large_tv_style"
-        android:layout_centerHorizontal="true"
-        android:text="@string/no_items_found_please_add_some"
-        />
-
     <include
         android:id="@+id/item_preview_layout"
         layout="@layout/item_preview"
@@ -20,13 +13,12 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/item_rv"
-        android:layout_marginTop="@dimen/medium_margin_padding"
+    <include
+        layout="@layout/clothing_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_below="@+id/item_preview_layout"
+        android:layout_alignParentBottom="true"
         android:layout_alignWithParentIfMissing="true"
         />
 
@@ -39,6 +31,7 @@
         android:contentDescription="@string/add_item"
         android:layout_marginTop="-8dp"
         android:layout_alignParentEnd="true"
+        android:layout_marginBottom="@dimen/medium_margin_padding"
         android:layout_marginEnd="@dimen/medium_margin_padding"
         android:elevation="@dimen/fab_elevation"
         />

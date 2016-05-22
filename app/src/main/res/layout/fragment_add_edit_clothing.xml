@@ -13,13 +13,13 @@
         android:layout_alignParentTop="true"
         android:layout_above="@+id/item_param_ll"
         android:background="?attr/colorPrimary"
-        android:contentDescription="@string/photo_holder"
+        android:contentDescription="@string/long_press_to_add_or_change_photo"
 
         />
 
     <TextView
         android:id="@+id/no_photo_tv"
-        style="@style/very_large_tv_style"
+        style="@style/xx_large_tv_style"
         android:text="@string/long_press_to_add_or_change_photo"
         android:textColor="@color/alterante_text"
         android:layout_alignBottom="@+id/item_photo_iv"

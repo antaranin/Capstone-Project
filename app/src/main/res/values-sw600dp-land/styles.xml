@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="fillable_view_ll_style">
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="max_fill">4</item>
+        <item name="android:layout_marginTop">@dimen/small_margin_padding</item>
+        <item name="android:layout_marginBottom">@dimen/small_margin_padding</item>
+    </style>
+
+    <style name="filable_view_title_ll_style" parent="x_large_tv_style">
+        <item name="android:layout_gravity">center</item>
+    </style>
+</resources>

@@ -4,6 +4,7 @@ package example.com.capstoneproject.gui_layer.fragments;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -18,6 +19,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -64,6 +67,12 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
     @BindView(R.id.item_rv)
     RecyclerView recycler;
 
+    @BindView(R.id.no_item_tv)
+    TextView noItemTv;
+
+    @BindView(R.id.add_item_fab_clf)
+    FloatingActionButton addItemFab;
+
     private ClothingAdapter clothingAdapter;
 
     @Setter
@@ -88,7 +97,7 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
-        isTablet = getResources().getBoolean(R.bool.is_tablet);
+        isTablet = getResources().getBoolean(R.bool.is_tablet_land);
         ButterKnife.bind(this, view);
         clothingAdapter = new ClothingAdapter();
         clothingAdapter.setListener(this);
@@ -156,7 +165,22 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
         log("Data count => " + data.getCount());
         clothingAdapter.setData(data);
         if (data.getCount() == 0)
+        {
+            previewLayout.setVisibility(View.GONE);
+            noItemTv.setVisibility(View.VISIBLE);
+            RelativeLayout.LayoutParams fabParams = (RelativeLayout.LayoutParams) addItemFab.getLayoutParams();
+            fabParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            fabParams.removeRule(RelativeLayout.BELOW);
             return;
+        }
+        else if(noItemTv.getVisibility() != View.GONE)
+        {
+            previewLayout.setVisibility(View.VISIBLE);
+            noItemTv.setVisibility(View.GONE);
+            RelativeLayout.LayoutParams fabParams = (RelativeLayout.LayoutParams) addItemFab.getLayoutParams();
+            fabParams.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            fabParams.addRule(RelativeLayout.BELOW, R.id.item_preview_layout);
+        }
 
         recycler.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener()
         {

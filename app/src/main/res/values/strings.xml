@@ -84,4 +84,8 @@
     <string name="cancel">Cancel</string>
     <string name="select_item_template" formatted="false">Select %s</string>
     <string name="manage_clothing">Manage clothing</string>
+    <string name="type">Type</string>
+    <string name="water_res">Water resistance</string>
+    <string name="wind_res">Wind resistance</string>
+    <string name="cold_res">Cold resistance</string>
 </resources>

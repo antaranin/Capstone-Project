@@ -123,7 +123,7 @@ public class AddEditClothingFragment extends Fragment
         ClothingItem preSetCurrentItem = currentItem;
         ClothingItem preSetDraftItem = draftItem;
         textWatcher = new NameChangeWatcher();
-        isTablet = getContext().getResources().getBoolean(R.bool.is_tablet);
+        isTablet = getContext().getResources().getBoolean(R.bool.is_tablet_land);
         if (savedInstanceState != null)
             Icepick.restoreInstanceState(this, savedInstanceState);
 

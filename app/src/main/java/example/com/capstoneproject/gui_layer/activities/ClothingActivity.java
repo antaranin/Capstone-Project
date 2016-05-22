@@ -31,7 +31,7 @@ public class ClothingActivity extends AppCompatActivity implements
         getSupportActionBar().setDisplayShowHomeEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
-        isTablet = getResources().getBoolean(R.bool.is_tablet);
+        isTablet = getResources().getBoolean(R.bool.is_tablet_land);
         if(isTablet)
             getSupportActionBar().setTitle(getString(R.string.manage_clothing));
 
