@@ -78,11 +78,21 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
     @Setter
     private OnListInteractionListener listener;
 
-    private boolean isTablet;
+    private boolean isTabletLand;
 
     public ClothingListFragment()
     {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        clothingAdapter = new ClothingAdapter();
+        clothingAdapter.setListener(this);
+        if(savedInstanceState != null)
+            restoreInstance(savedInstanceState);
     }
 
     @Override
@@ -97,22 +107,33 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
-        isTablet = getResources().getBoolean(R.bool.is_tablet_land);
+        isTabletLand = getResources().getBoolean(R.bool.is_tablet_land);
         ButterKnife.bind(this, view);
-        clothingAdapter = new ClothingAdapter();
-        clothingAdapter.setListener(this);
-        recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         recycler.setAdapter(clothingAdapter);
+        recycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        if(savedInstanceState != null)
+            restoreInstance(savedInstanceState);
+    }
+
+    private void restoreInstance(Bundle savedInstanceState)
+    {
+        clothingAdapter.restoreInstance(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        clothingAdapter.onSaveInstance(outState);
     }
 
     @Override
     public void onResume()
     {
         super.onResume();
-        if(isTablet)
-            return;
-        //noinspection ConstantConditions
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.item_list);
+        if(!isTabletLand)
+            //noinspection ConstantConditions
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.item_list);
     }
 
     @Optional
@@ -190,7 +211,7 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
                 if (recycler.getChildCount() > 0)
                 {
                     recycler.getViewTreeObserver().removeOnPreDrawListener(this);
-                    clothingAdapter.selectItem(0, true);
+                    clothingAdapter.restoreItemPosition(true);
                     return true;
                 }
                 return false;

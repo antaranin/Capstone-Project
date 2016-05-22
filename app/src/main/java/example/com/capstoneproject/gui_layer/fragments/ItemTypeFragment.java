@@ -1,7 +1,6 @@
 package example.com.capstoneproject.gui_layer.fragments;
 
 
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -36,6 +35,7 @@ import lombok.Setter;
 public class ItemTypeFragment extends Fragment
 {
     private static final String TAG = ItemTypeFragment.class.getSimpleName();
+
     @BindView(R.id.type_imge_flipper)
     ViewFlipper imageFlipper;
 
@@ -54,7 +54,6 @@ public class ItemTypeFragment extends Fragment
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
@@ -68,7 +67,18 @@ public class ItemTypeFragment extends Fragment
     {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        final GestureDetector detector = new GestureDetector(getContext(), new SlideListener());
+        createFlipperViews();
+        imageFlipper.setOnTouchListener((v, event) -> detector.onTouchEvent(event));
 
+        if(savedInstanceState != null)
+            restoreInstance(savedInstanceState);
+        else
+            createNewInstance();
+    }
+
+    private void createFlipperViews()
+    {
         int textMargins = getResources().getDimensionPixelSize(R.dimen.large_margin_padding);
         int imageTopMargin = getResources().getDimensionPixelSize(R.dimen.medium_margin_padding);
         float textSize = getResources().getDimension(R.dimen.large_text_size);
@@ -78,7 +88,7 @@ public class ItemTypeFragment extends Fragment
             int type = types[i];
 
             RelativeLayout rl = new RelativeLayout(getContext());
-            rl.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT));
+            rl.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             final String clothingDesc = Utilities.getClothingDesc(getContext(), type);
             ImageView iv = new ImageView(getContext());
             iv.setImageResource(Utilities.getClothingTypeDrawableRes(type));
@@ -105,13 +115,6 @@ public class ItemTypeFragment extends Fragment
             tv.setLayoutParams(tvLayParams);
             imageFlipper.addView(rl);
         }
-        final GestureDetector detector = new GestureDetector(getContext(), new SlideListener());
-        imageFlipper.setOnTouchListener((v, event) -> detector.onTouchEvent(event));
-
-        if(savedInstanceState != null)
-            restoreInstance(savedInstanceState);
-        else
-            createNewInstance();
     }
 
     private void createNewInstance()
@@ -131,11 +134,11 @@ public class ItemTypeFragment extends Fragment
 
     private void restoreInstance(Bundle savedState)
     {
-        int savedCurrentTypePos = currentTypePos;
+        int preSetCurrentTypePos = currentTypePos;
         Icepick.restoreInstanceState(this, savedState);
         //this is here to avoid overwriting value provided in setItem, if it was called before instance restoration
-        if(savedCurrentTypePos != -1)
-            currentTypePos = savedCurrentTypePos;
+        if(preSetCurrentTypePos != -1)
+            currentTypePos = preSetCurrentTypePos;
         moveTo(currentTypePos);
     }
 

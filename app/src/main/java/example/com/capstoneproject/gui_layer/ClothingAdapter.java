@@ -2,6 +2,7 @@ package example.com.capstoneproject.gui_layer;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -18,8 +19,8 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import example.com.capstoneproject.R;
-import example.com.capstoneproject.management_layer.Utilities;
 import example.com.capstoneproject.data_layer.ClothingCursor;
+import example.com.capstoneproject.management_layer.Utilities;
 import example.com.capstoneproject.model_layer.ClothingItem;
 import hugo.weaving.DebugLog;
 import lombok.Setter;
@@ -29,9 +30,12 @@ import lombok.Setter;
  */
 public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.ClothingViewHolder>
 {
+    private static final String SELECTION_KEY = "selection_key";
     private ClothingCursor cursor;
     @Setter
     private OnDataSetListener listener;
+
+    private Integer savedPosition = null;
 
     @Override
     @DebugLog
@@ -42,6 +46,18 @@ public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.Clot
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.clothing_recycler_item, parent, false);
         return new ClothingViewHolder(view);
+    }
+
+    public void onSaveInstance(Bundle outState)
+    {
+        outState.putInt(SELECTION_KEY, savedPosition != null ? savedPosition : getSelection());
+    }
+
+    public void restoreInstance(Bundle savedState)
+    {
+        savedPosition = savedState.getInt(SELECTION_KEY);
+        if(getItemCount() > savedPosition)
+            restoreItemPosition(true);
     }
 
     @Override
@@ -80,9 +96,17 @@ public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.Clot
         resetSelection();
     }
 
+    public void restoreItemPosition(boolean notifyListeners)
+    {
+        int position = savedPosition == null ? 0 : savedPosition;
+        setSelection(position);
+        selectItem(position, notifyListeners);
+        savedPosition = null;
+    }
+
     public void selectItem(int position, boolean userCalled)
     {
-        if (cursor.getCount() <= position)
+        if (getItemCount() <= position)
             throw new AssertionError("The position provided is outside of data range");
         if(!userCalled)
             setSelection(position);

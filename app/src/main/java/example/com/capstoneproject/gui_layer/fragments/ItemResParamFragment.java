@@ -22,6 +22,8 @@ import example.com.capstoneproject.management_layer.Utilities;
 import example.com.capstoneproject.gui_layer.FillableView;
 import example.com.capstoneproject.model_layer.ClothingItem;
 import hugo.weaving.DebugLog;
+import icepick.Icepick;
+import icepick.State;
 import lombok.Setter;
 
 public class ItemResParamFragment extends Fragment
@@ -40,10 +42,12 @@ public class ItemResParamFragment extends Fragment
     FillableView fillableView;
 
     @ItemResParamFragment.ParamType
-    private int currentParamType;
+    @State
+    int currentParamType = - 1;
 
     @ClothingItem.Resistance
-    private int resistance = ClothingItem.NO_RES;
+    @State
+    int resistance = -1;
 
     @Setter
     private OnResParamInteractionListener listener;
@@ -88,8 +92,6 @@ public class ItemResParamFragment extends Fragment
         if(listener != null)
             listener.onParamEditCanceled();
     }
-
-
 
     @DebugLog
     public void setParamType(@ParamType int type)
@@ -195,12 +197,38 @@ public class ItemResParamFragment extends Fragment
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState)
+    {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        int preSetResistance = resistance;
+        int preSetParam = currentParamType;
+        if(savedInstanceState != null)
+            restoreInstance(savedInstanceState);
+        if(preSetResistance != -1)
+            resistance = preSetResistance;
+        if(preSetParam != -1)
+            currentParamType = preSetParam;
         processResistance(resistance);
         resetTypeViews();
+    }
+
+    private void restoreInstance(Bundle savedState)
+    {
+        Icepick.restoreInstanceState(this, savedState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this, outState);
     }
 
     @DebugLog

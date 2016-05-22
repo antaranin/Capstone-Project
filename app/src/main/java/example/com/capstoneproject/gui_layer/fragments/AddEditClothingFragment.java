@@ -101,6 +101,22 @@ public class AddEditClothingFragment extends Fragment
 
     @Override
     @DebugLog
+    public void onActivityCreated(@Nullable Bundle savedInstanceState)
+    {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    @DebugLog
+    public void onCreate(@Nullable Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null)
+            Icepick.restoreInstanceState(this, savedInstanceState);
+    }
+
+    @Override
+    @DebugLog
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
@@ -120,19 +136,17 @@ public class AddEditClothingFragment extends Fragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
-        ClothingItem preSetCurrentItem = currentItem;
-        ClothingItem preSetDraftItem = draftItem;
+/*        ClothingItem preSetCurrentItem = currentItem;
+        ClothingItem preSetDraftItem = draftItem;*/
         textWatcher = new NameChangeWatcher();
         isTablet = getContext().getResources().getBoolean(R.bool.is_tablet_land);
-        if (savedInstanceState != null)
-            Icepick.restoreInstanceState(this, savedInstanceState);
 
-        //This is necessary for when the items are set before restoration is called.
+/*        //This is necessary for when the items are set before restoration is called.
         if (preSetCurrentItem != null)
             currentItem = preSetCurrentItem;
 
         if (preSetDraftItem != null)
-            draftItem = preSetDraftItem;
+            draftItem = preSetDraftItem;*/
 
         ButterKnife.bind(this, view);
         if (currentItem == null && draftItem == null)
@@ -257,25 +271,6 @@ public class AddEditClothingFragment extends Fragment
         resetViews();
         startEditingItem();
     }
-
-/*    public void setItem(@Nullable ClothingItem item)
-    {
-        if (item != null)
-        {
-            currentItem = item;
-            draftItem = isEditing() ? item.copy() : null;
-        }
-        else
-        {
-            currentItem = null;
-            draftItem = new ClothingItem();
-        }
-        if (getView() != null)
-        {
-            resetViews();
-            setFabsToAddEditMode(isAdding() || isEditing());
-        }
-    }*/
 
     private void startAddingNewItem()
     {
@@ -542,25 +537,29 @@ public class AddEditClothingFragment extends Fragment
         log("Cold res before setting => " + draftItem.getColdResistance());
         draftItem.setColdResistance(resistance);
         log("Cold res after setting => " + draftItem.getColdResistance());
-        resetViews();
+        if(getView() != null)
+            resetViews();
     }
 
     public void setItemWindRes(@ClothingItem.Resistance int resistance)
     {
         draftItem.setWindResistance(resistance);
-        resetViews();
+        if(getView() != null)
+            resetViews();
     }
 
     public void setItemWaterRes(@ClothingItem.Resistance int resistance)
     {
         draftItem.setWaterResistance(resistance);
-        resetViews();
+        if(getView() != null)
+            resetViews();
     }
 
     public void setItemType(@ClothingItem.ClothingType int type)
     {
         draftItem.setType(type);
-        resetViews();
+        if(getView() != null)
+            resetViews();
     }
 
     private void log(String message)

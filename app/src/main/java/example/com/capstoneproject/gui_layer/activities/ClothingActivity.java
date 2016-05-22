@@ -1,7 +1,13 @@
 package example.com.capstoneproject.gui_layer.activities;
 
 import android.os.Bundle;
+import android.support.annotation.IntDef;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import example.com.capstoneproject.R;
 import example.com.capstoneproject.gui_layer.fragments.AddEditClothingFragment;
@@ -9,17 +15,32 @@ import example.com.capstoneproject.gui_layer.fragments.ClothingListFragment;
 import example.com.capstoneproject.gui_layer.fragments.ItemResParamFragment;
 import example.com.capstoneproject.gui_layer.fragments.ItemTypeFragment;
 import example.com.capstoneproject.model_layer.ClothingItem;
+import hugo.weaving.DebugLog;
+import icepick.Icepick;
+import lombok.NonNull;
 
 public class ClothingActivity extends AppCompatActivity implements
         ClothingListFragment.OnListInteractionListener, AddEditClothingFragment.OnAddEditClothingInteractionListener,
         ItemResParamFragment.OnResParamInteractionListener, ItemTypeFragment.OnTypeInteractionListener
 {
-    private ClothingListFragment listFragment;
+    private static final String CURRENT_OPERATION_KEY = "current_operation_key";
+    private static final String TAG = ClothingActivity.class.getSimpleName();
+    private ClothingListFragment clothingListFragment;
     private AddEditClothingFragment addEditClothingFragment;
     private ItemResParamFragment itemResParamFragment;
     private ItemTypeFragment itemTypeFragment;
 
-    private boolean isTablet;
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({VIEWING, ADDING_EDITING, PARAMETER_SETTING, TYPE_SETTING})
+    private @interface  Operation {}
+    private static final int VIEWING = 1;
+    private static final int ADDING_EDITING = 2;
+    private static final int PARAMETER_SETTING = 3;
+    private static final int TYPE_SETTING = 4;
+
+    @ClothingActivity.Operation
+
+    private boolean isLandTablet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -31,16 +52,167 @@ public class ClothingActivity extends AppCompatActivity implements
         getSupportActionBar().setDisplayShowHomeEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
-        isTablet = getResources().getBoolean(R.bool.is_tablet_land);
-        if(isTablet)
+        isLandTablet = getResources().getBoolean(R.bool.is_tablet_land);
+        if(isLandTablet)
             getSupportActionBar().setTitle(getString(R.string.manage_clothing));
 
-        listFragment = new ClothingListFragment();
+        if(savedInstanceState == null)
+            createNewInstance();
+        else
+            restoreInstance(savedInstanceState);
+    }
+
+    private void createNewInstance()
+    {
+        showClothingListFragment();
+        if(isLandTablet)
+            showAddEditClothingFragment();
+    }
+
+    private void restoreInstance(@NonNull  Bundle savedInstance)
+    {
+        Icepick.restoreInstanceState(this, savedInstance);
+        @Operation
+        int currentOperation = savedInstance.getInt(CURRENT_OPERATION_KEY);
+
+        final FragmentManager supportFragmentManager = getSupportFragmentManager();
+
+        itemResParamFragment =
+                (ItemResParamFragment) supportFragmentManager.getFragment(savedInstance, ItemResParamFragment.class.getSimpleName());
+        if(itemResParamFragment != null)
+            itemResParamFragment.setListener(this);
+
+        itemTypeFragment =
+                (ItemTypeFragment) supportFragmentManager.getFragment(savedInstance, ItemTypeFragment.class.getSimpleName());
+        if(itemTypeFragment != null)
+            itemTypeFragment.setListener(this);
+
+        addEditClothingFragment =
+                (AddEditClothingFragment) supportFragmentManager.getFragment(savedInstance, AddEditClothingFragment.class.getSimpleName());
+        if(addEditClothingFragment != null)
+            addEditClothingFragment.setListener(this);
+
+        clothingListFragment =
+                (ClothingListFragment) supportFragmentManager.getFragment(savedInstance, ClothingListFragment.class.getSimpleName());
+        clothingListFragment.setListener(this);
+
+/*        if(isLandTablet)
+        {
+            showAddEditClothingFragment();
+            if(currentOperation == PARAMETER_SETTING)
+                placeItemResParamFragment(itemResParamFragment);
+            else if(currentOperation == TYPE_SETTING)
+                placeItemTypeFragment(itemTypeFragment);
+        }
+        else
+        {
+            if(currentOperation != VIEWING)
+                showAddEditClothingFragment();
+
+            if(currentOperation == PARAMETER_SETTING)
+                placeItemResParamFragment(itemResParamFragment);
+            else if(currentOperation == TYPE_SETTING)
+                placeItemTypeFragment(itemTypeFragment);
+        }*/
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+
+        @Operation
+        int currentOperation;
+
+        if(itemResParamFragment != null && itemResParamFragment.isAdded())
+            currentOperation = PARAMETER_SETTING;
+        else if(itemTypeFragment != null && itemTypeFragment.isAdded())
+            currentOperation = TYPE_SETTING;
+        else if(addEditClothingFragment != null && addEditClothingFragment.isAdded())
+            currentOperation = ADDING_EDITING;
+        else
+            currentOperation = VIEWING;
+
+        outState.putInt(CURRENT_OPERATION_KEY, currentOperation);
+
+        Icepick.saveInstanceState(this, outState);
+        final FragmentManager supportFragmentManager = getSupportFragmentManager();
+        if(itemResParamFragment != null && itemResParamFragment.isAdded())
+        {
+            supportFragmentManager.putFragment(outState, ItemResParamFragment.class.getSimpleName(), itemResParamFragment);
+            log("Saving item res param fragment");
+        }
+
+        if(itemTypeFragment != null && itemTypeFragment.isAdded())
+        {
+            supportFragmentManager.putFragment(outState, ItemTypeFragment.class.getSimpleName(), itemTypeFragment);
+            log("Saving item type fragment");
+        }
+
+        if(addEditClothingFragment != null && supportFragmentManager.getFragments().contains(addEditClothingFragment))
+        {
+            supportFragmentManager.putFragment(outState, AddEditClothingFragment.class.getSimpleName(), addEditClothingFragment);
+            log("Saving add edit clothing fragment");
+        }
+        supportFragmentManager.putFragment(outState, ClothingListFragment.class.getSimpleName(), clothingListFragment);
+    }
+
+    @DebugLog
+    private void showClothingListFragment()
+    {
+        if(clothingListFragment == null)
+        {
+            clothingListFragment = new ClothingListFragment();
+            clothingListFragment.setListener(this);
+        }
+
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_holder_layout_ca, listFragment)
+                .add(R.id.fragment_holder_layout_ca, clothingListFragment)
                 .commit();
-        listFragment.setListener(this);
+    }
+
+    private void showAddEditClothingFragment()
+    {
+        if(addEditClothingFragment == null)
+        {
+            addEditClothingFragment = new AddEditClothingFragment();
+            addEditClothingFragment.setListener(this);
+        }
+
+        if(isLandTablet)
+        {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.extra_fragment_holder_layout_ca, addEditClothingFragment)
+                    .commit();
+        }
+        else
+        {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_holder_layout_ca, addEditClothingFragment)
+                    .addToBackStack(addEditClothingFragment.getClass().getSimpleName())
+                    .commit();
+        }
+    }
+
+    private void placeItemResParamFragment(@NonNull ItemResParamFragment fragment)
+    {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_holder_layout_ca, fragment)
+                .addToBackStack(fragment.getClass().getSimpleName())
+                .commit();
+    }
+
+    private void placeItemTypeFragment(@NonNull  ItemTypeFragment fragment)
+    {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_holder_layout_ca, fragment)
+                .addToBackStack(fragment.getClass().getSimpleName())
+                .commit();
     }
 
     @Override
@@ -56,20 +228,6 @@ public class ClothingActivity extends AppCompatActivity implements
         addEditClothingFragment.setItemForEdit(item);
     }
 
-    private void showAddEditClothingFragment()
-    {
-        if(addEditClothingFragment == null)
-        {
-            addEditClothingFragment = new AddEditClothingFragment();
-            addEditClothingFragment.setListener(this);
-        }
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_holder_layout_ca, addEditClothingFragment)
-                .addToBackStack(addEditClothingFragment.getClass().getSimpleName())
-                .commit();
-    }
-
     @Override
     public void onRequestParamPick(@ItemResParamFragment.ParamType int type, ClothingItem item)
     {
@@ -83,12 +241,7 @@ public class ClothingActivity extends AppCompatActivity implements
             itemResParamFragment.setParamType(type);
             itemResParamFragment.setCurrentItem(item);
         }
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_holder_layout_ca, itemResParamFragment)
-                .addToBackStack(itemResParamFragment.getClass().getSimpleName())
-                .commit();
+        placeItemResParamFragment(itemResParamFragment);
     }
 
     @Override
@@ -103,12 +256,7 @@ public class ClothingActivity extends AppCompatActivity implements
         {
             itemTypeFragment.setItem(item);
         }
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_holder_layout_ca, itemTypeFragment)
-                .addToBackStack(itemTypeFragment.getClass().getSimpleName())
-                .commit();
+        placeItemTypeFragment(itemTypeFragment);
 
     }
 
@@ -155,5 +303,10 @@ public class ClothingActivity extends AppCompatActivity implements
     public void onTypeSelectionCancelled()
     {
         getSupportFragmentManager().popBackStack();
+    }
+
+    private void log(String message)
+    {
+        Log.d(TAG, message);
     }
 }
