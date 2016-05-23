@@ -23,6 +23,7 @@
         android:layout_height="0dp"
         android:layout_above="@+id/param_description_tv"
         android:layout_below="@+id/up_down_tv"
+        android:transitionName="@string/main_item_transition"
         />
 
     <TextView

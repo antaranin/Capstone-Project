@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -508,7 +509,12 @@ public class AddEditClothingFragment extends Fragment
     void onClothingTypeBtnPressd()
     {
         if (listener != null)
-            listener.onRequestTypePick(draftItem);
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                listener.onRequestTypePick(draftItem, clothingTypeIv, Utilities.getClothingDesc(getContext(), draftItem.getType()));
+            else
+                listener.onRequestTypePick(draftItem);
+        }
     }
 
     @DebugLog
@@ -516,7 +522,12 @@ public class AddEditClothingFragment extends Fragment
     void onWaterResBtnPressed()
     {
         if (listener != null)
-            listener.onRequestParamPick(ItemResParamFragment.WATER_RES, draftItem);
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                listener.onRequestParamPick(ItemResParamFragment.WATER_RES, draftItem, waterResView, getString(R.string.main_item_transition));
+            else
+                listener.onRequestParamPick(ItemResParamFragment.WATER_RES, draftItem);
+        }
     }
 
     @DebugLog
@@ -524,7 +535,12 @@ public class AddEditClothingFragment extends Fragment
     void onWindResBtnPressed()
     {
         if (listener != null)
-            listener.onRequestParamPick(ItemResParamFragment.WIND_RES, draftItem);
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                listener.onRequestParamPick(ItemResParamFragment.WIND_RES, draftItem, windResView, getString(R.string.main_item_transition));
+            else
+                listener.onRequestParamPick(ItemResParamFragment.WIND_RES, draftItem);
+        }
     }
 
     @DebugLog
@@ -532,7 +548,12 @@ public class AddEditClothingFragment extends Fragment
     void onColdResBtnPressed()
     {
         if (listener != null)
-            listener.onRequestParamPick(ItemResParamFragment.COLD_RES, draftItem);
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                listener.onRequestParamPick(ItemResParamFragment.COLD_RES, draftItem, coldResView, getString(R.string.main_item_transition));
+            else
+                listener.onRequestParamPick(ItemResParamFragment.COLD_RES, draftItem);
+        }
     }
 
     private boolean isEditing()
@@ -591,7 +612,11 @@ public class AddEditClothingFragment extends Fragment
 
         void onRequestTypePick(ClothingItem item);
 
+        void onRequestTypePick(ClothingItem item, View sharedView, String transition);
+
         void onAddingCanceled();
+
+        void onRequestParamPick(int waterRes, ClothingItem draftItem, FillableView waterResView, String transitionName);
     }
 
     private class NameChangeWatcher implements TextWatcher

@@ -89,4 +89,8 @@
     <string name="wind_res">Wind resistance</string>
     <string name="cold_res">Cold resistance</string>
     <string name="no_weather_data">No weather data available. Check your Internet connection and Location settings.</string>
+    <string name="main_item_transition">MainItemTransition</string>
+    <string name="tran1">tran1</string>
+    <string name="tran2">tran2</string>
+    <string name="tran3">tran3</string>
 </resources>

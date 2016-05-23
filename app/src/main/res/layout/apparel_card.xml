@@ -13,8 +13,28 @@
     android:foreground="?selectableItemBackground"
     >
 
-    <include
-        layout="@layout/card_fill_item"
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+    <ImageView
+        android:id="@+id/card_photo_iv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:transitionName="@string/image_transition"
         />
+
+    <TextView
+        android:id="@+id/item_name_tv"
+        style="@style/large_tv_style"
+        android:maxLines="1"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        />
+    </LinearLayout>
 
 </android.support.v7.widget.CardView>

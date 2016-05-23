@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Binder;
+import android.util.TypedValue;
 import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -96,8 +97,12 @@ public class WidgetRemoteViewsService extends RemoteViewsService
             Bitmap itemImage = null;
             try
             {
+                int prefferedWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 30, getResources().getDisplayMetrics());
+
                 itemImage = Picasso.with(WidgetRemoteViewsService.this)
                         .load(dataPoint.getImageUri())
+                        .resize(prefferedWidth, (int) (prefferedWidth * 1.5f))
+                        .centerCrop()
                         .get();
             }
             catch (IOException e)

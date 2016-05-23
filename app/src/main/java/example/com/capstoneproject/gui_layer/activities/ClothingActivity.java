@@ -1,16 +1,22 @@
 package example.com.capstoneproject.gui_layer.activities;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Fade;
 import android.util.Log;
+import android.view.View;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import example.com.capstoneproject.R;
+import example.com.capstoneproject.gui_layer.DetailsTransition;
+import example.com.capstoneproject.gui_layer.FillableView;
 import example.com.capstoneproject.gui_layer.fragments.AddEditClothingFragment;
 import example.com.capstoneproject.gui_layer.fragments.ClothingListFragment;
 import example.com.capstoneproject.gui_layer.fragments.ItemResParamFragment;
@@ -104,7 +110,7 @@ public class ClothingActivity extends AppCompatActivity implements
         clothingListFragment.setListener(this);
 
         boolean orientationChanged = isLandTablet != wasLandTablet;
-        if(orientationChanged)
+        if (orientationChanged)
             processTabletOrientationChange(currentOperation);
 
 /*        if(isLandTablet)
@@ -132,7 +138,7 @@ public class ClothingActivity extends AppCompatActivity implements
         FragmentManager fm = getSupportFragmentManager();
         fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         FragmentTransaction tran = fm.beginTransaction();
-        if(fm.getFragments().contains(addEditClothingFragment))
+        if (fm.getFragments().contains(addEditClothingFragment))
         {
             tran.remove(addEditClothingFragment);
             log("Removing add edit clothing fragment");
@@ -154,9 +160,9 @@ public class ClothingActivity extends AppCompatActivity implements
         if (currentOperation != VIEWING || isLandTablet)
             showAddEditClothingFragment();
 
-        if(currentOperation == TYPE_SETTING)
+        if (currentOperation == TYPE_SETTING)
             placeItemTypeFragment(itemTypeFragment);
-        else if(currentOperation == PARAMETER_SETTING)
+        else if (currentOperation == PARAMETER_SETTING)
             placeItemResParamFragment(itemResParamFragment);
     }
 
@@ -223,6 +229,8 @@ public class ClothingActivity extends AppCompatActivity implements
         {
             addEditClothingFragment = new AddEditClothingFragment();
             addEditClothingFragment.setListener(this);
+            addEditClothingFragment.setEnterTransition(new Fade());
+            addEditClothingFragment.setExitTransition(new Fade());
         }
 
         if (isLandTablet)
@@ -244,20 +252,37 @@ public class ClothingActivity extends AppCompatActivity implements
 
     private void placeItemResParamFragment(@NonNull ItemResParamFragment fragment)
     {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_holder_layout_ca, fragment)
-                .addToBackStack(fragment.getClass().getSimpleName())
-                .commit();
+        placeItemResParamFragment(fragment, null, null);
     }
 
-    private void placeItemTypeFragment(@NonNull ItemTypeFragment fragment)
+    private void placeItemResParamFragment(@NonNull ItemResParamFragment fragment, @Nullable View sharedView, @Nullable String transitionName)
     {
-        getSupportFragmentManager()
+        FragmentTransaction tran = getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_holder_layout_ca, fragment)
-                .addToBackStack(fragment.getClass().getSimpleName())
-                .commit();
+                .addToBackStack(fragment.getClass().getSimpleName());
+
+        if (sharedView != null && transitionName != null)
+            tran.addSharedElement(sharedView, transitionName);
+
+        tran.commit();
+    }
+
+    private void placeItemTypeFragment(@NonNull  ItemTypeFragment fragment)
+    {
+        placeItemTypeFragment(fragment, null, null);
+    }
+
+    private void placeItemTypeFragment(@NonNull ItemTypeFragment fragment, @Nullable View sharedView, @Nullable String transitionName)
+    {
+        FragmentTransaction tran =
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_holder_layout_ca, fragment)
+                        .addToBackStack(fragment.getClass().getSimpleName());
+        if (sharedView != null && transitionName != null)
+            tran.addSharedElement(sharedView, transitionName);
+        tran.commit();
     }
 
     @Override
@@ -288,33 +313,61 @@ public class ClothingActivity extends AppCompatActivity implements
     @Override
     public void onRequestParamPick(@ItemResParamFragment.ParamType int type, ClothingItem item)
     {
+        onRequestParamPick(type, item, null, null);
+    }
+
+    @Override
+    public void onRequestParamPick(@ItemResParamFragment.ParamType int type, ClothingItem item, FillableView sharedView, String transitionName)
+    {
         if (itemResParamFragment == null)
         {
             itemResParamFragment = ItemResParamFragment.createFragment(type, item);
             itemResParamFragment.setListener(this);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            {
+                itemResParamFragment.setSharedElementEnterTransition(new DetailsTransition());
+                itemResParamFragment.setSharedElementReturnTransition(new DetailsTransition());
+                addEditClothingFragment.setEnterTransition(new Fade());
+                addEditClothingFragment.setExitTransition(new Fade());
+            }
         }
         else
         {
             itemResParamFragment.setParamType(type);
             itemResParamFragment.setCurrentItem(item);
         }
-        placeItemResParamFragment(itemResParamFragment);
+        placeItemResParamFragment(itemResParamFragment, sharedView, transitionName);
     }
 
     @Override
     public void onRequestTypePick(ClothingItem item)
     {
+        onRequestTypePick(item, null, null);
+
+    }
+
+    @Override
+    public void onRequestTypePick(ClothingItem item, View sharedView, String transition)
+    {
         if (itemTypeFragment == null)
         {
             itemTypeFragment = ItemTypeFragment.createFragment(item);
             itemTypeFragment.setListener(this);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            {
+                itemResParamFragment.setSharedElementEnterTransition(new DetailsTransition());
+                itemResParamFragment.setSharedElementReturnTransition(new DetailsTransition());
+                addEditClothingFragment.setEnterTransition(new Fade());
+                addEditClothingFragment.setExitTransition(new Fade());
+            }
         }
         else
         {
             itemTypeFragment.setItem(item);
         }
-        placeItemTypeFragment(itemTypeFragment);
-
+        placeItemTypeFragment(itemTypeFragment, sharedView, transition);
     }
 
     @Override

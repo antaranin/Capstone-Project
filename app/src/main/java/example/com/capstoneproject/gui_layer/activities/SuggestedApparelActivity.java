@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -111,7 +112,7 @@ public class SuggestedApparelActivity extends AppCompatActivity
         adapter.setListener(this);
         RecyclerView recycler = ButterKnife.findById(this, R.id.recycler_view);
         StaggeredGridLayoutManager sglm =
-                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                new StaggeredGridLayoutManager(getResources().getInteger(R.integer.suggested_columns), StaggeredGridLayoutManager.VERTICAL);
         recycler.setLayoutManager(sglm);
         recycler.setAdapter(adapter);
 
@@ -296,8 +297,9 @@ public class SuggestedApparelActivity extends AppCompatActivity
 
     private void goToItemList()
     {
+        Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle();
         Intent i = new Intent(this, ClothingActivity.class);
-        startActivity(i);
+        startActivity(i, bundle);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package example.com.capstoneproject.gui_layer.fragments;
 
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -94,6 +95,8 @@ public class ItemTypeFragment extends Fragment
             iv.setImageResource(Utilities.getClothingTypeDrawableRes(type));
             iv.setContentDescription(clothingDesc);
             iv.setId(i);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                iv.setTransitionName(clothingDesc);
             TextView tv = new TextView(getContext());
             tv.setText(clothingDesc);
             tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);

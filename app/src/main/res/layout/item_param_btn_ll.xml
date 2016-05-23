@@ -17,6 +17,7 @@
         android:layout_weight="1"
         android:src="@drawable/ic_t_shirt"
         android:contentDescription="@string/cd_temp_val"
+        android:transitionName="@string/main_item_transition"
         />
 
     <example.com.capstoneproject.gui_layer.FillableView
@@ -24,6 +25,7 @@
         style="@style/fillable_view_ll_style"
         app:main_image="@drawable/ic_drop"
         app:filler_image="@drawable/ic_drop_filled"
+        android:transitionName="@string/tran1"
         app:max_fill="@integer/resistance_count"
         />
 
@@ -36,6 +38,7 @@
         app:filler_image="@drawable/ic_wind_fill"
         app:max_fill="@integer/resistance_count"
         android:layout_margin="-5dp"
+        android:transitionName="@string/tran2"
         />
 
     <example.com.capstoneproject.gui_layer.FillableView
@@ -46,6 +49,7 @@
         app:main_image="@drawable/ic_temperature"
         app:filler_image="@drawable/ic_temperature_fill"
         app:max_fill="@integer/resistance_count"
+        android:transitionName="@string/tran3"
         />
 
 </LinearLayout>
