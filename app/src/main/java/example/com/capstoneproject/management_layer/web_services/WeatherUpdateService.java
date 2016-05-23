@@ -99,6 +99,10 @@ public class WeatherUpdateService extends IntentService
         {
             log("Exception while retrieving weather information => " + e);
         }
+        catch (Exception e)
+        {
+            log("Unexpected exception while retrieving weather information => " + e);
+        }
         return null;
     }
 

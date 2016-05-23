@@ -86,6 +86,7 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
     private OnListInteractionListener listener;
 
     private boolean isTabletLand;
+    private boolean reselectCurrent;
 
     public ClothingListFragment()
     {
@@ -226,8 +227,8 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
                 if (recycler.getChildCount() > 0)
                 {
                     recycler.getViewTreeObserver().removeOnPreDrawListener(this);
-                    clothingAdapter.restoreItemPosition(!isTabletLand || (!clothingAdapter.hasSavedPosition()
-                            && clothingAdapter.getSelection() == -1));
+                    clothingAdapter.restoreItemPosition(!isTabletLand || reselectCurrent);
+                    reselectCurrent = false;
                     return true;
                 }
                 return false;
@@ -318,6 +319,14 @@ public class ClothingListFragment extends Fragment implements LoaderManager.Load
                 .centerCrop()
                 .into(photoPreviewIv);
 
+    }
+
+    public void setReselectCurrent(boolean reselectCurrent)
+    {
+        if(clothingAdapter != null && clothingAdapter.getItemCount() > 0 && reselectCurrent)
+            clothingAdapter.selectItem(clothingAdapter.getSelection(), true);
+        else
+            this.reselectCurrent = reselectCurrent;
     }
 
     public interface OnListInteractionListener

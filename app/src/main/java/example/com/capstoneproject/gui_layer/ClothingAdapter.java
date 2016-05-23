@@ -104,7 +104,6 @@ public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.Clot
     public void restoreItemPosition(boolean notifyListeners)
     {
         int position = savedPosition == null ? 0 : savedPosition;
-        setSelection(position);
         selectItem(position, notifyListeners);
         savedPosition = null;
     }
@@ -113,8 +112,7 @@ public class ClothingAdapter extends SingleSelectionAdapter<ClothingAdapter.Clot
     {
         if (getItemCount() <= position)
             throw new AssertionError("The position provided is outside of data range");
-        if(!userCalled)
-            setSelection(position);
+        setSelection(position);
 
         if (listener != null && userCalled)
         {

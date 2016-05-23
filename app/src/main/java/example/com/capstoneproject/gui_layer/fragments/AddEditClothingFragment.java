@@ -93,7 +93,7 @@ public class AddEditClothingFragment extends Fragment
     private OnAddEditClothingInteractionListener listener;
 
     private NameChangeWatcher textWatcher;
-    private boolean isTablet;
+    private boolean isLandTablet;
 
 
     public AddEditClothingFragment()
@@ -141,7 +141,7 @@ public class AddEditClothingFragment extends Fragment
 /*        ClothingItem preSetCurrentItem = currentItem;
         ClothingItem preSetDraftItem = draftItem;*/
         textWatcher = new NameChangeWatcher();
-        isTablet = getContext().getResources().getBoolean(R.bool.is_tablet_land);
+        isLandTablet = getContext().getResources().getBoolean(R.bool.is_tablet_land);
 
 /*        //This is necessary for when the items are set before restoration is called.
         if (preSetCurrentItem != null)
@@ -173,7 +173,7 @@ public class AddEditClothingFragment extends Fragment
 
     private void setCurrentTitle()
     {
-        if(isTablet)
+        if(isLandTablet)
             return;
         String title;
         if(isAdding())
@@ -415,10 +415,7 @@ public class AddEditClothingFragment extends Fragment
 
     private void processConfirmationBtnColor()
     {
-        if (!isEditing() && !isAdding())
-            return;
-
-        if (isSaveAcceptable(draftItem))
+        if ((!isEditing() && !isAdding()) || isSaveAcceptable(draftItem))
         {
             TypedValue typedValue = new TypedValue();
             Resources.Theme theme = getContext().getTheme();

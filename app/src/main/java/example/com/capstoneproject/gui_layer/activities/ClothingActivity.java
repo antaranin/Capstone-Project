@@ -234,6 +234,8 @@ public class ClothingActivity extends AppCompatActivity implements
             addEditClothingFragment.setListener(this);
             addEditClothingFragment.setEnterTransition(new Fade());
             addEditClothingFragment.setExitTransition(new Fade());
+            if(isLandTablet)
+                clothingListFragment.setReselectCurrent(true);
         }
 
         if (isLandTablet)
@@ -376,7 +378,10 @@ public class ClothingActivity extends AppCompatActivity implements
     @Override
     public void onAddingCanceled()
     {
-        getSupportFragmentManager().popBackStack();
+        if(!isLandTablet)
+            getSupportFragmentManager().popBackStack();
+        else
+            clothingListFragment.setReselectCurrent(true);
     }
 
     @Override
