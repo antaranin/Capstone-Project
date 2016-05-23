@@ -17,7 +17,7 @@
         android:layout_weight="1"
         android:src="@drawable/ic_t_shirt"
         android:contentDescription="@string/cd_temp_val"
-        android:transitionName="@string/main_item_transition"
+        android:transitionName="@string/tran"
         />
 
     <example.com.capstoneproject.gui_layer.FillableView

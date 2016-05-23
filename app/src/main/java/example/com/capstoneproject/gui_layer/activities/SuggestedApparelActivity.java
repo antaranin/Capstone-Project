@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -46,7 +47,6 @@ import example.com.capstoneproject.model_layer.ClothingItem;
 import icepick.Icepick;
 import icepick.State;
 import lombok.NonNull;
-
 
 
 public class SuggestedApparelActivity extends AppCompatActivity
@@ -101,6 +101,8 @@ public class SuggestedApparelActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggested_apparel);
+        if (getResources().getBoolean(R.bool.portrait_only))
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
 
         prepareAd();
 
@@ -136,9 +138,11 @@ public class SuggestedApparelActivity extends AppCompatActivity
     {
         interstitialAd = new InterstitialAd(this);
         interstitialAd.setAdUnitId(BuildConfig.AD_UNIT_ID);
-        interstitialAd.setAdListener(new AdListener() {
+        interstitialAd.setAdListener(new AdListener()
+        {
             @Override
-            public void onAdClosed() {
+            public void onAdClosed()
+            {
                 requestNewInterstitial();
                 goToItemList();
             }
@@ -147,7 +151,8 @@ public class SuggestedApparelActivity extends AppCompatActivity
         requestNewInterstitial();
     }
 
-    private void requestNewInterstitial() {
+    private void requestNewInterstitial()
+    {
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice("SEE_YOUR_LOGCAT_TO_GET_YOUR_DEVICE_ID")
                 .build();
@@ -165,10 +170,10 @@ public class SuggestedApparelActivity extends AppCompatActivity
 
     private void requestPermissionsIfNeeded(String action)
     {
-        if(!Utilities.REQUEST_PERMISSION_ACTION.equals(action))
+        if (!Utilities.REQUEST_PERMISSION_ACTION.equals(action))
             return;
 
-        if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION))
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION))
         {
             //TODO
             new AlertDialog.Builder(this)
@@ -199,7 +204,7 @@ public class SuggestedApparelActivity extends AppCompatActivity
         extractClothingData();
     }
 
-   private void restoreInstance(Bundle savedInstanceState)
+    private void restoreInstance(Bundle savedInstanceState)
     {
         Icepick.restoreInstanceState(this, savedInstanceState);
         if (currentWeather != null)
@@ -247,7 +252,7 @@ public class SuggestedApparelActivity extends AppCompatActivity
             WeatherSyncAdapter.syncImmediately(this);
             return;
         }
-        if(getString(R.string.no_weather_data).equals(noItemTv.getText().toString()))
+        if (getString(R.string.no_weather_data).equals(noItemTv.getText().toString()))
             noItemTv.setVisibility(View.GONE);
         fillTopWithData(currentWeather);
     }
@@ -255,7 +260,7 @@ public class SuggestedApparelActivity extends AppCompatActivity
     private void extractClothingData()
     {
         Cursor cursor = getContentResolver().query(DataContract.ClothingEntry.CONTENT_URI, null, null, null, null);
-        if(cursor == null)
+        if (cursor == null)
             return;
         suggestionProcessor.extractDataFromCursor(cursor);
         cursor.close();
@@ -283,13 +288,13 @@ public class SuggestedApparelActivity extends AppCompatActivity
         switch (item.getItemId())
         {
             case R.id.action_item_list:
-                if(interstitialAd.isLoaded())
+                if (interstitialAd.isLoaded())
                     interstitialAd.show();
                 else
                     goToItemList();
                 return true;
-            case R.id.action_settings:
-                return true;
+/*            case R.id.action_settings:
+                return true;*/
             default:
                 return false;
         }
@@ -312,7 +317,7 @@ public class SuggestedApparelActivity extends AppCompatActivity
     public void onSuggestionMade(ArrayList<ClothingItem> suggestedItems)
     {
         adapter.setData(suggestedItems);
-        if(suggestedItems.size() > 0)
+        if (suggestedItems.size() > 0)
         {
             noItemTv.setVisibility(View.GONE);
         }

@@ -22,6 +22,7 @@
         android:contentDescription="@string/cd_temp_val"
         android:layout_marginTop="@dimen/medium_margin_padding"
         android:layout_marginBottom="@dimen/medium_margin_padding"
+        android:transitionName="@string/tran"
         />
 
     <TextView
@@ -34,12 +35,12 @@
         style="@style/fillable_view_ll_style"
         app:main_image="@drawable/ic_drop"
         app:filler_image="@drawable/ic_drop_filled"
+        android:transitionName="@string/tran1"
         />
 
     <TextView
         style="@style/filable_view_title_ll_style"
         android:layout_gravity="center"
-        android:text="@string/wind_res"
         />
 
     <example.com.capstoneproject.gui_layer.FillableView
@@ -49,6 +50,7 @@
         app:filler_image="@drawable/ic_wind_fill"
         android:paddingTop="-8dp"
         android:paddingBottom="-8dp"
+        android:transitionName="@string/tran2"
         />
 
     <TextView
@@ -61,5 +63,6 @@
         style="@style/fillable_view_ll_style"
         app:main_image="@drawable/ic_temperature"
         app:filler_image="@drawable/ic_temperature_fill"
+        android:transitionName="@string/tran3"
         />
 </LinearLayout>

@@ -1,5 +1,6 @@
 package example.com.capstoneproject.gui_layer.activities;
 
+import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
@@ -58,6 +59,8 @@ public class ClothingActivity extends AppCompatActivity implements
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clothing);
+        if(getResources().getBoolean(R.bool.portrait_only))
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
@@ -328,8 +331,8 @@ public class ClothingActivity extends AppCompatActivity implements
             {
                 itemResParamFragment.setSharedElementEnterTransition(new DetailsTransition());
                 itemResParamFragment.setSharedElementReturnTransition(new DetailsTransition());
-                addEditClothingFragment.setEnterTransition(new Fade());
-                addEditClothingFragment.setExitTransition(new Fade());
+                itemResParamFragment.setEnterTransition(new Fade());
+                itemResParamFragment.setExitTransition(new Fade());
             }
         }
         else
@@ -357,10 +360,10 @@ public class ClothingActivity extends AppCompatActivity implements
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             {
-                itemResParamFragment.setSharedElementEnterTransition(new DetailsTransition());
-                itemResParamFragment.setSharedElementReturnTransition(new DetailsTransition());
-                addEditClothingFragment.setEnterTransition(new Fade());
-                addEditClothingFragment.setExitTransition(new Fade());
+                itemTypeFragment.setSharedElementEnterTransition(new DetailsTransition());
+                itemTypeFragment.setSharedElementReturnTransition(new DetailsTransition());
+                itemTypeFragment.setEnterTransition(new Fade());
+                itemTypeFragment.setExitTransition(new Fade());
             }
         }
         else

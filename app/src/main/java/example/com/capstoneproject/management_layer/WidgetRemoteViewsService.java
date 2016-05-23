@@ -101,8 +101,6 @@ public class WidgetRemoteViewsService extends RemoteViewsService
 
                 itemImage = Picasso.with(WidgetRemoteViewsService.this)
                         .load(dataPoint.getImageUri())
-                        .resize(prefferedWidth, (int) (prefferedWidth * 1.5f))
-                        .centerCrop()
                         .get();
             }
             catch (IOException e)
